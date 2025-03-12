@@ -16,9 +16,7 @@
     If (!FileExist(filepath)){
       filepath := "" A_ScriptDir "\builds\Notes\" notesFolder "\" CurrentAct "\notes.txt" ""
     }
-    ;CurrentZone looks like "C_G2_5_1 Mastodon Badlands", ZoneName needs to just be "Mastodon Badlands".
-    StringTrimLeft, ZoneName, CurrentZone, InStr(CurrentZone, " ") ;Trim up to and including the first space. This will get rid of area code.
-    ZoneName := "zone:" + ZoneName
+    ZoneName := "zone:" + CurrentZone
     ReadLines := "False"
     ZoneLine := []
     Loop, read, %filepath%

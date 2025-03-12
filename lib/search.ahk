@@ -1,4 +1,4 @@
-RotateAct(direction, acts, current) {
+﻿RotateAct(direction, acts, current) {
   global
   newAct := ""
   indexShift := direction = "next" ? 1 : -1
@@ -199,7 +199,9 @@ SearchLog() {
           If (newZone <> CurrentZone)
           {
             CurrentZone := newZone
-            GuiControl, Controls:Choose, CurrentZone, % "|" newZone
+            ;We have to match the zones in the dropdown which have the area code trimmed so that it's pretty
+            StringTrimLeft, trimmedNewZone, newZone, InStr(newZone, " ")
+            GuiControl, Controls:Choose, CurrentZone, % "|" trimmedNewZone
             UpdateImages()
           }
 
@@ -214,7 +216,6 @@ SearchLog() {
       {
         actData := data.p2acts
       }
-      newAct := RotateAct("next", actData, newAct)
 
       ; newAct := CurrentAct
       ; If (numPart != 3)

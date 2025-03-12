@@ -217,8 +217,10 @@ GetDelimitedZoneListString(data, act) {
   If (numPart != 3) {
     For key, zoneGroup in data {
       If (zoneGroup.act = act) {
-        For k, val in zoneGroup.list {
-          dList .= val . "|"
+        For k, zone in zoneGroup.list {
+          ;zone looks like "C_G2_5_1 Mastodon Badlands", turn it into "Mastodon Badlands".
+          StringTrimLeft, trimmedVal, zone, InStr(zone, " ")
+          dList .= trimmedVal . "|"
           If (val = CurrentZone) {
             dList .= "|"
           }
