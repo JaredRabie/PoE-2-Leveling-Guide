@@ -66,7 +66,7 @@ CycleZones() {
   GuiControl, Controls:Choose, CurrentZone, % "|" newZone
 
   UpdateImages()
-return
+  return
 }
 
 If (KeyHideExp != "") {

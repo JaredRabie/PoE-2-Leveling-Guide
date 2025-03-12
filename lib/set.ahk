@@ -1,4 +1,4 @@
-SetNotes()
+﻿SetNotes()
 {
   Gui, Notes:Destroy
   If (hideNotes != "True") {
@@ -250,7 +250,7 @@ SetExp()
       ;monsterLevel := Maps[CurrentZone].Tier[Regions[Maps[CurrentZone].Region].SocketedStones + 1] + 67
     }
   }
-  
+
   If (monsterLevel = 71) {
     monsterLevel = 70.94
   } Else If (monsterLevel = 72) {
@@ -328,21 +328,21 @@ SetGems()
 
   fileName := CurrentGem
   Loop %A_ScriptDir%\builds\%overlayFolder%\gems\*.ini
-	{
+  {
     tempFileName = %A_LoopFileName%
     StringTrimRight, tempFileName, tempFileName, 4
     If ( InStr(tempFileName,CurrentGem) ) {
       fileName := tempFileName
       break
     }
-	}
+  }
 
   fileName=%A_scriptdir%\builds\%overlayFolder%\gems\%fileName%.ini
   LoadGemFile(fileName)
 
   gem_images_width := Ceil(pixels*gemSpacing)
   gem_images_height := Ceil(pixels*gemSpacing)
-  
+
   links_width := 0
   For k, someControl in controlList {
     If (someControl = ""){
@@ -428,11 +428,11 @@ SetGems()
 }
 
 MeasureTextWidth(Str, FontOpts = "", FontName = "") {
-   Gui, New
-   If (FontOpts <> "") || (FontName <> "")
-      Gui, Font, %FontOpts%, %FontName%
-   Gui, Add, Text, hwndHWND, %Str%
-   WinGetPos, , ,Width, , ahk_id %HWND%
-   Gui, Destroy
-   Return Width
+  Gui, New
+  If (FontOpts <> "") || (FontName <> "")
+    Gui, Font, %FontOpts%, %FontName%
+  Gui, Add, Text, hwndHWND, %Str%
+  WinGetPos, , ,Width, , ahk_id %HWND%
+  Gui, Destroy
+  Return Width
 }

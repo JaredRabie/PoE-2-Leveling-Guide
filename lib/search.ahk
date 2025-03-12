@@ -1,4 +1,4 @@
-﻿RotateAct(direction, acts, current) {
+RotateAct(direction, acts, current) {
   global
   newAct := ""
   indexShift := direction = "next" ? 1 : -1
@@ -27,35 +27,35 @@
 }
 
 RotateZone(direction, zones, act, current) {
-    newZone := ""
-    indexShift := direction = "next" ? 1 : -1
-    first := ""
-    last := ""
+  newZone := ""
+  indexShift := direction = "next" ? 1 : -1
+  first := ""
+  last := ""
 
-    For key, zone in zones {
-        If (zone.act = act) {
-            Loop, % zone["list"].Length()
-            {
-                If (A_Index = 1) {
-                    first := zone.list[A_Index]
-                }
-                If (A_Index = zone.list.MaxIndex()) {
-                    last := zone.list[A_Index]
-                }
-
-                If (zone.list[A_Index] = current) {
-                    newZone := zone.list[A_Index + indexShift]
-                }
-            }
-            break
+  For key, zone in zones {
+    If (zone.act = act) {
+      Loop, % zone["list"].Length()
+      {
+        If (A_Index = 1) {
+          first := zone.list[A_Index]
         }
-	}
+        If (A_Index = zone.list.MaxIndex()) {
+          last := zone.list[A_Index]
+        }
 
-    If (not StrLen(newZone)) {
-        newZone := direction = "next" ? first : last
+        If (zone.list[A_Index] = current) {
+          newZone := zone.list[A_Index + indexShift]
+        }
+      }
+      break
     }
+  }
 
-    Return newZone
+  If (not StrLen(newZone)) {
+    newZone := direction = "next" ? first : last
+  }
+
+  Return newZone
 }
 
 SearchLog() {
@@ -94,19 +94,19 @@ SearchLog() {
         {
           tempFileName = %A_LoopFileName%
           StringTrimRight, tempFileName, tempFileName, 4
-          If (tempFileName != "meta" and tempFileName != "class") 
+          If (tempFileName != "meta" and tempFileName != "class")
           {
             gemFiles.Push(tempFileName)
           }
         }
         For index, someLevel in gemFiles
         {
-          If ( InStr(someLevel,newLevel) || InStr(someLevel,nextLevel) ) 
+          If ( InStr(someLevel,newLevel) || InStr(someLevel,nextLevel) )
           {
             GuiControl,Gems:,CurrentGem, % "|" test := GetDelimitedPartListString(gemFiles, someLevel)
             Sleep, 100
             Gui, Gems:Submit, NoHide
-            If (gems_toggle) 
+            If (gems_toggle)
             {
               SetGems()
             }

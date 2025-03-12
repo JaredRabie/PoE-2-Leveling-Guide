@@ -81,7 +81,7 @@ global trigger := 0
 ININame=%A_scriptdir%\config.ini
 ifnotexist,%ININame%
 {
-  WriteAll()
+	WriteAll()
 }
 
 ;*** Load
@@ -123,9 +123,9 @@ IniRead, hideNotes, %ININame%, Options, hideNotes, %hideNotes%
 IniRead, expOrPen, %ININame%, Options, expOrPen, %expOrPen%
 
 If (startHidden = "True"){
-  LG_toggle := 1
+	LG_toggle := 1
 } Else If (startHidden = "False"){
-  LG_toggle := 0
+	LG_toggle := 0
 }
 
 IniRead, backgroundColor, %ININame%, Color, backgroundColor, %backgroundColor%
@@ -166,75 +166,75 @@ IniRead, gems_toggle, %INIMeta%, State, gems_toggle, %gems_toggle%
 IniRead, LastLogLines, %INIMeta%, State, LastLogLines, %LastLogLines%
 
 SaveState() {
-  global
-  IniWrite, %numPart%, %INIMeta%, State, numPart
-  IniWrite, %CurrentPart%, %INIMeta%, State, CurrentPart
-  IniWrite, %CurrentAct%, %INIMeta%, State, CurrentAct
-  IniWrite, %CurrentZone%, %INIMeta%, State, CurrentZone
-  IniWrite, %CurrentLevel%, %INIMeta%, State, CurrentLevel
-  IniWrite, %CurrentGem%, %INIMeta%, State, CurrentGem
-  IniWrite, %zone_toggle%, %INIMeta%, State, zone_toggle
-  IniWrite, %level_toggle%, %INIMeta%, State, level_toggle
-  IniWrite, %gems_toggle%, %INIMeta%, State, gems_toggle
-  IniWrite, %LastLogLines%, %INIMeta%, State, LastLogLines
+	global
+	IniWrite, %numPart%, %INIMeta%, State, numPart
+	IniWrite, %CurrentPart%, %INIMeta%, State, CurrentPart
+	IniWrite, %CurrentAct%, %INIMeta%, State, CurrentAct
+	IniWrite, %CurrentZone%, %INIMeta%, State, CurrentZone
+	IniWrite, %CurrentLevel%, %INIMeta%, State, CurrentLevel
+	IniWrite, %CurrentGem%, %INIMeta%, State, CurrentGem
+	IniWrite, %zone_toggle%, %INIMeta%, State, zone_toggle
+	IniWrite, %level_toggle%, %INIMeta%, State, level_toggle
+	IniWrite, %gems_toggle%, %INIMeta%, State, gems_toggle
+	IniWrite, %LastLogLines%, %INIMeta%, State, LastLogLines
 }
 
 WriteAll() {
-  global
+	global
 	;IniWrite, Value, Filename, Section, Key
-  IniWrite, %overlayFolder%, %ININame%, Build, overlayFolder
-  IniWrite, %notesFolder%, %ININame%, Build, notesFolder
+	IniWrite, %overlayFolder%, %ININame%, Build, overlayFolder
+	IniWrite, %notesFolder%, %ININame%, Build, notesFolder
 
-  IniWrite, %points%, %ININame%, Size, points
-  IniWrite, %font%, %ININame%, Size, font
-  IniWrite, %boldness%, %ININame%, Size, boldness
-  IniWrite, %imageSizeMultiplier%, %ININame%, Size, imageSizeMultiplier
-  IniWrite, %lineSpacing%, %ININame%, Size, lineSpacing
-  IniWrite, %gemSpacing%, %ININame%, Size, gemSpacing
-  IniWrite, %maxNotesWidth%, %ININame%, Size, maxNotesWidth
-  IniWrite, %maxGuideWidth%, %ININame%, Size, maxGuideWidth
-  IniWrite, %maxLinksWidth%, %ININame%, Size, maxLinksWidth
+	IniWrite, %points%, %ININame%, Size, points
+	IniWrite, %font%, %ININame%, Size, font
+	IniWrite, %boldness%, %ININame%, Size, boldness
+	IniWrite, %imageSizeMultiplier%, %ININame%, Size, imageSizeMultiplier
+	IniWrite, %lineSpacing%, %ININame%, Size, lineSpacing
+	IniWrite, %gemSpacing%, %ININame%, Size, gemSpacing
+	IniWrite, %maxNotesWidth%, %ININame%, Size, maxNotesWidth
+	IniWrite, %maxGuideWidth%, %ININame%, Size, maxGuideWidth
+	IniWrite, %maxLinksWidth%, %ININame%, Size, maxLinksWidth
 
-  IniWrite, %guideXoffset%, %ININame%, Offset, guideXoffset
-  IniWrite, %guideYoffset%, %ININame%, Offset, guideYoffset
-  IniWrite, %levelXoffset%, %ININame%, Offset, levelXoffset
-  IniWrite, %levelYoffset%, %ININame%, Offset, levelYoffset
-  IniWrite, %gemsXoffset%, %ININame%, Offset, gemsXoffset
-  IniWrite, %gemsYoffset%, %ININame%, Offset, gemsYoffset
-  IniWrite, %imagesXoffset%, %ININame%, Offset, imagesXoffset
-  IniWrite, %imagesYoffset%, %ININame%, Offset, imagesoffset
+	IniWrite, %guideXoffset%, %ININame%, Offset, guideXoffset
+	IniWrite, %guideYoffset%, %ININame%, Offset, guideYoffset
+	IniWrite, %levelXoffset%, %ININame%, Offset, levelXoffset
+	IniWrite, %levelYoffset%, %ININame%, Offset, levelYoffset
+	IniWrite, %gemsXoffset%, %ININame%, Offset, gemsXoffset
+	IniWrite, %gemsYoffset%, %ININame%, Offset, gemsYoffset
+	IniWrite, %imagesXoffset%, %ININame%, Offset, imagesXoffset
+	IniWrite, %imagesYoffset%, %ININame%, Offset, imagesoffset
 
-  IniWrite, %treeSide%, %ININame%, Options, treeSide
-  IniWrite, %treeName%, %ININame%, Options, treeName
-  IniWrite, %autoToggleZoneImages%, %ININame%, Options, autoToggleZoneImages
-  IniWrite, %opacity%, %ININame%, Options, opacity
-  IniWrite, %startHidden%, %ININame%, Options, startHidden
-  IniWrite, %displayTimeout%, %ININame%, Options, displayTimeout
-  IniWrite, %persistText%, %ININame%, Options, persistText
-  IniWrite, %hideGuide%, %ININame%, Options, hideGuide
-  IniWrite, %hideNotes%, %ININame%, Options, hideNotes
-  IniWrite, %expOrPen%, %ININame%, Options, expOrPen
+	IniWrite, %treeSide%, %ININame%, Options, treeSide
+	IniWrite, %treeName%, %ININame%, Options, treeName
+	IniWrite, %autoToggleZoneImages%, %ININame%, Options, autoToggleZoneImages
+	IniWrite, %opacity%, %ININame%, Options, opacity
+	IniWrite, %startHidden%, %ININame%, Options, startHidden
+	IniWrite, %displayTimeout%, %ININame%, Options, displayTimeout
+	IniWrite, %persistText%, %ININame%, Options, persistText
+	IniWrite, %hideGuide%, %ININame%, Options, hideGuide
+	IniWrite, %hideNotes%, %ININame%, Options, hideNotes
+	IniWrite, %expOrPen%, %ININame%, Options, expOrPen
 
-  IniWrite, %backgroundColor%, %ININame%, Color, backgroundColor
-  IniWrite, %redColor%, %ININame%, Color, redColor
-  IniWrite, %greenColor%, %ININame%, Color, greenColor
-  IniWrite, %blueColor%, %ININame%, Color, blueColor
-  IniWrite, %yellowColor%, %ININame%, Color, yellowColor
-  IniWrite, %whiteColor%, %ININame%, Color, whiteColor
-  
-  IniWrite, %KeySettings%, %ININame%, ToggleKey, KeySettings
-  IniWrite, %KeyHideLayout%, %ININame%, ToggleKey, KeyHideLayout
-  IniWrite, %KeyHideZones%, %ININame%, ToggleKey, KeyHideZones
-  IniWrite, %KeyCycleZones%, %ININame%, ToggleKey, KeyCycleZones
-  IniWrite, %KeyHideExp%, %ININame%, ToggleKey, KeyHideExp
-  IniWrite, %KeyHideTree%, %ININame%, ToggleKey, KeyHideTree
-  IniWrite, %KeyHideAtlas%, %ININame%, ToggleKey, KeyHideAtlas
-  IniWrite, %KeyHideGems%, %ININame%, ToggleKey, KeyHideGems
-  IniWrite, %KeyShowSyndicate%, %ININame%, ToggleKey, KeyShowSyndicate
-  IniWrite, %KeyShowTemple%, %ININame%, ToggleKey, KeyShowTemple
-  IniWrite, %KeyShowHeist%, %ININame%, ToggleKey, KeyShowHeist
-  IniWrite, %KeyOnDeath%, %ININame%, ToggleKey, KeyOnDeath
+	IniWrite, %backgroundColor%, %ININame%, Color, backgroundColor
+	IniWrite, %redColor%, %ININame%, Color, redColor
+	IniWrite, %greenColor%, %ININame%, Color, greenColor
+	IniWrite, %blueColor%, %ININame%, Color, blueColor
+	IniWrite, %yellowColor%, %ININame%, Color, yellowColor
+	IniWrite, %whiteColor%, %ININame%, Color, whiteColor
 
-  IniWrite, %skipUpdates%, %ININame%, Skip, skipUpdates
-  IniWrite, %skipGemImages%, %ININame%, Skip, skipGemImages
+	IniWrite, %KeySettings%, %ININame%, ToggleKey, KeySettings
+	IniWrite, %KeyHideLayout%, %ININame%, ToggleKey, KeyHideLayout
+	IniWrite, %KeyHideZones%, %ININame%, ToggleKey, KeyHideZones
+	IniWrite, %KeyCycleZones%, %ININame%, ToggleKey, KeyCycleZones
+	IniWrite, %KeyHideExp%, %ININame%, ToggleKey, KeyHideExp
+	IniWrite, %KeyHideTree%, %ININame%, ToggleKey, KeyHideTree
+	IniWrite, %KeyHideAtlas%, %ININame%, ToggleKey, KeyHideAtlas
+	IniWrite, %KeyHideGems%, %ININame%, ToggleKey, KeyHideGems
+	IniWrite, %KeyShowSyndicate%, %ININame%, ToggleKey, KeyShowSyndicate
+	IniWrite, %KeyShowTemple%, %ININame%, ToggleKey, KeyShowTemple
+	IniWrite, %KeyShowHeist%, %ININame%, ToggleKey, KeyShowHeist
+	IniWrite, %KeyOnDeath%, %ININame%, ToggleKey, KeyOnDeath
+
+	IniWrite, %skipUpdates%, %ININame%, Skip, skipUpdates
+	IniWrite, %skipGemImages%, %ININame%, Skip, skipGemImages
 }

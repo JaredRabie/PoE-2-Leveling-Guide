@@ -50,7 +50,7 @@ LaunchBuild() {
     Gui, Build:Add, Edit, vMH%A_Index%npc gUpdateEdit w%npcWidth% h%optionHeight% x+5, % groupList[GroupIndex(MH%A_Index%group)][2]
     Gui, Build:Add, Edit, vMH%A_Index%note gUpdateEdit w%noteWidth% h%optionHeight% x+5, % MH%A_Index%note
     isChecked := MH%A_Index%image
-    Gui, Build:Add, CheckBox, vMH%A_Index%image gUpdateImage w%showWidth% h%optionHeight% x+5 Checked%isChecked%, 
+    Gui, Build:Add, CheckBox, vMH%A_Index%image gUpdateImage w%showWidth% h%optionHeight% x+5 Checked%isChecked%,
   }
 
   ;Body Armour
@@ -70,7 +70,7 @@ LaunchBuild() {
     Gui, Build:Add, Edit, vBA%A_Index%npc gUpdateEdit w%npcWidth% h%optionHeight% x+5, % groupList[GroupIndex(BA%A_Index%group)][2]
     Gui, Build:Add, Edit, vBA%A_Index%note gUpdateEdit w%noteWidth% h%optionHeight% x+5, % BA%A_Index%note
     isChecked := BA%A_Index%image
-    Gui, Build:Add, CheckBox, vBA%A_Index%image gUpdateImage w%showWidth% h%optionHeight% x+5 Checked%isChecked%, 
+    Gui, Build:Add, CheckBox, vBA%A_Index%image gUpdateImage w%showWidth% h%optionHeight% x+5 Checked%isChecked%,
   }
 
   ;Spacing
@@ -93,7 +93,7 @@ LaunchBuild() {
     Gui, Build:Add, Edit, vOH%A_Index%npc gUpdateEdit w%npcWidth% h%optionHeight% x+5, % groupList[GroupIndex(OH%A_Index%group)][2]
     Gui, Build:Add, Edit, vOH%A_Index%note gUpdateEdit w%noteWidth% h%optionHeight% x+5, % OH%A_Index%note
     isChecked := OH%A_Index%image
-    Gui, Build:Add, CheckBox, vOH%A_Index%image gUpdateImage w%showWidth% h%optionHeight% x+5 Checked%isChecked%, 
+    Gui, Build:Add, CheckBox, vOH%A_Index%image gUpdateImage w%showWidth% h%optionHeight% x+5 Checked%isChecked%,
   }
 
   ;Helmet
@@ -113,7 +113,7 @@ LaunchBuild() {
     Gui, Build:Add, Edit, vHT%A_Index%npc gUpdateEdit w%npcWidth% h%optionHeight% x+5, % groupList[GroupIndex(HT%A_Index%group)][2]
     Gui, Build:Add, Edit, vHT%A_Index%note gUpdateEdit w%noteWidth% h%optionHeight% x+5, % HT%A_Index%note
     isChecked := HT%A_Index%image
-    Gui, Build:Add, CheckBox, vHT%A_Index%image gUpdateImage w%showWidth% h%optionHeight% x+5 Checked%isChecked%, 
+    Gui, Build:Add, CheckBox, vHT%A_Index%image gUpdateImage w%showWidth% h%optionHeight% x+5 Checked%isChecked%,
   }
 
   ;Controls
@@ -128,7 +128,7 @@ LaunchBuild() {
   Gui, Build:Add, DropDownList, vgemFilter2 gUpdateFilter Sort w%filterWidth% h%listHeight% x+5, % GetFilters(gemFilter2)
   Gui, Build:Add, DropDownList, vcharClass gUpdateControl w%groupWidth% h%listHeight% x+5, % GetClasses(charClass)
   Gui, Build:Add, DropDownList, vgemLevel gUpdateControl w%gemWidth% h%listHeight% x+5, % GetLevels(gemLevel)
-  
+
   Gui, Build:Add, Text, w%charWidth% h%optionHeight% x%columnTwoX% y+5, Character Name:
 
   Gui, Build:Add, Button, gClearBuild w%groupWidth% h%optionHeight% x+5, &Clear
@@ -158,7 +158,7 @@ LaunchBuild() {
     Gui, Build:Add, Edit, vGL%A_Index%npc gUpdateEdit w%npcWidth% h%optionHeight% x+5, % groupList[GroupIndex(GL%A_Index%group)][2]
     Gui, Build:Add, Edit, vGL%A_Index%note gUpdateEdit w%noteWidth% h%optionHeight% x+5, % GL%A_Index%note
     isChecked := GL%A_Index%image
-    Gui, Build:Add, CheckBox, vGL%A_Index%image gUpdateImage w%showWidth% h%optionHeight% x+5 Checked%isChecked%, 
+    Gui, Build:Add, CheckBox, vGL%A_Index%image gUpdateImage w%showWidth% h%optionHeight% x+5 Checked%isChecked%,
   }
 
   ;Boots
@@ -178,7 +178,7 @@ LaunchBuild() {
     Gui, Build:Add, Edit, vBT%A_Index%npc gUpdateEdit w%npcWidth% h%optionHeight% x+5, % groupList[GroupIndex(BT%A_Index%group)][2]
     Gui, Build:Add, Edit, vBT%A_Index%note gUpdateEdit w%noteWidth% h%optionHeight% x+5, % BT%A_Index%note
     isChecked := BT%A_Index%image
-    Gui, Build:Add, CheckBox, vBT%A_Index%image gUpdateImage w%showWidth% h%optionHeight% x+5 Checked%isChecked%, 
+    Gui, Build:Add, CheckBox, vBT%A_Index%image gUpdateImage w%showWidth% h%optionHeight% x+5 Checked%isChecked%,
   }
 
   ;Rings
@@ -198,7 +198,7 @@ LaunchBuild() {
     Gui, Build:Add, Edit, vRG%A_Index%npc gUpdateEdit w%npcWidth% h%optionHeight% x+5, % groupList[GroupIndex(RG%A_Index%group)][2]
     Gui, Build:Add, Edit, vRG%A_Index%note gUpdateEdit w%noteWidth% h%optionHeight% x+5, % RG%A_Index%note
     isChecked := RG%A_Index%image
-    Gui, Build:Add, CheckBox, vRG%A_Index%image gUpdateImage w%showWidth% h%optionHeight% x+5 Checked%isChecked%, 
+    Gui, Build:Add, CheckBox, vRG%A_Index%image gUpdateImage w%showWidth% h%optionHeight% x+5 Checked%isChecked%,
   }
 
   For k, someControl in controlList {
@@ -212,10 +212,6 @@ LaunchBuild() {
   WinActivate, ahk_id %BuildWindow%
 
 }
-
-
-
-
 
 LoadGemFile(fileName) {
   global
@@ -298,20 +294,19 @@ LoadGemFile(fileName) {
   }
 }
 
-
 ReadGemFile(fileLevel) {
   global
   ;Read fileLevel.INI
   fileName := fileLevel
   Loop %A_ScriptDir%\builds\%overlayFolder%\gems\*.ini
-	{
+  {
     tempFileName = %A_LoopFileName%
     StringTrimRight, tempFileName, tempFileName, 4
     If ( InStr(tempFileName,fileLevel) ) {
       fileName := tempFileName
       break
     }
-	}
+  }
   ;*** Create INI if not exist
   INIGem=%A_scriptdir%\builds\%overlayFolder%\gems\%fileName%.ini
   INIMeta=%A_scriptdir%\builds\%overlayFolder%\gems\meta.ini
@@ -441,14 +436,14 @@ SaveGemFile(fileLevel) {
 
   fileName := fileLevel
   Loop %A_ScriptDir%\builds\%overlayFolder%\gems\*.ini
-	{
+  {
     tempFileName = %A_LoopFileName%
     StringTrimRight, tempFileName, tempFileName, 4
     If ( InStr(tempFileName,fileLevel) ) {
       fileName := tempFileName
       break
     }
-	}
+  }
 
   INIGem=%A_scriptdir%\builds\%overlayFolder%\gems\%fileName%.ini
   INIMeta=%A_scriptdir%\builds\%overlayFolder%\gems\meta.ini
@@ -503,7 +498,7 @@ LoadGroup(loadLevel, loadChar) {
     ; }
 
     ; If (addGem1 and addGem2) {
-      groupList[1].Push(someGem.name) ; Push every gem to All
+    groupList[1].Push(someGem.name) ; Push every gem to All
     ; }
 
     If (someGem.level <= loadLevel) {
@@ -535,7 +530,7 @@ LoadGroup(loadLevel, loadChar) {
       thisLevel := someGem.level
       ;Mercy Mission has gems at different levels so put them all in one
       ;without breaking vendors
-      If (thisGroup = "Mercy Mission") { 
+      If (thisGroup = "Mercy Mission") {
         thisLevel := 4
         If (loadLevel = 2) { ;Don't show Mercy Mission for level 2
           continue
@@ -563,20 +558,20 @@ LoadGroup(loadLevel, loadChar) {
 
       If (groupIndex) { ;Already exists (common)
         ; If (addGem1 and addGem2) {
-          groupList[groupIndex].Push(someGem.name)
+        groupList[groupIndex].Push(someGem.name)
         ; }
         If InStr(thisGroup, A_Space) and addVendor { ;For quests also push to the vendor
           groupIndex := GroupIndex(someGem.vendor)
           If (groupIndex) { ;Vendor exists (common)
             ; If (addGem1 and addGem2) {
-              groupList[groupIndex].Push(someGem.name)
+            groupList[groupIndex].Push(someGem.name)
             ; }
           } Else { ;Make Vendor (once)
             groupList[groupList.length()+1] := []
             groupList[groupList.length()].Push(someGem.vendor)
             groupList[groupList.length()].Push(someGem.vendor)
             ; If (addGem1 and addGem2) {
-              groupList[groupList.length()].Push(someGem.name)
+            groupList[groupList.length()].Push(someGem.name)
             ; }
           }
         } Else If ((thisGroup = "Siosa" and loadLevel >= 26) or (thisGroup = "Lilly" and loadLevel >= 38) or ((thisGroup = "Nessa" or thisGroup = "Mule") and loadLevel = 4)) { ;Also push to Inventory
@@ -584,14 +579,14 @@ LoadGroup(loadLevel, loadChar) {
             groupIndex := GroupIndex("Inventory")
             If (groupIndex) { ;Inventory exists (common)
               ; If (addGem1 and addGem2) {
-                groupList[groupIndex].Push(someGem.name)
+              groupList[groupIndex].Push(someGem.name)
               ; }
             } Else { ;Make Inventory (once)
               groupList[groupList.length()+1] := []
               groupList[groupList.length()].Push("Inventory")
               groupList[groupList.length()].Push("")
               ; If (addGem1 and addGem2) {
-                groupList[groupList.length()].Push(someGem.name)
+              groupList[groupList.length()].Push(someGem.name)
               ; }
             }
           }
@@ -602,28 +597,28 @@ LoadGroup(loadLevel, loadChar) {
           groupList[groupList.length()].Push("Drop-Only")
           groupList[groupList.length()].Push("Trade")
           ; If (addGem1 and addGem2) {
-            groupList[groupList.length()].Push(someGem.name)
+          groupList[groupList.length()].Push(someGem.name)
           ; }
-        } Else If InStr(thisGroup, A_Space) { 
+        } Else If InStr(thisGroup, A_Space) {
           ;Make quest first (once)
           groupList[groupList.length()].Push(thisGroup)
           groupList[groupList.length()].Push(someGem.quest)
           ; If (addGem1 and addGem2) {
-            groupList[groupList.length()].Push(someGem.name)
+          groupList[groupList.length()].Push(someGem.name)
           ; }
           If (addVendor) {
             ;For quests also push to vendor
             groupIndex := GroupIndex(someGem.vendor)
             If (groupIndex) { ;Vendor exists (common)
               ; If (addGem1 and addGem2) {
-                groupList[groupIndex].Push(someGem.name)
+              groupList[groupIndex].Push(someGem.name)
               ; }
             } Else { ;Make Vendor (once)
               groupList[groupList.length()+1] := []
               groupList[groupList.length()].Push(someGem.vendor)
               groupList[groupList.length()].Push(someGem.vendor)
               ; If (addGem1 and addGem2) {
-                groupList[groupList.length()].Push(someGem.name)
+              groupList[groupList.length()].Push(someGem.name)
               ; }
             }
           }
@@ -632,7 +627,7 @@ LoadGroup(loadLevel, loadChar) {
           groupList[groupList.length()].Push(thisGroup)
           groupList[groupList.length()].Push(thisGroup)
           ; If (addGem1 and addGem2) {
-            groupList[groupList.length()].Push(someGem.name)
+          groupList[groupList.length()].Push(someGem.name)
           ; }
           If ((thisGroup = "Siosa" and loadLevel >= 26) or (thisGroup = "Lilly" and loadLevel >= 38) or ((thisGroup = "Nessa" or thisGroup = "Mule") and loadLevel = 4)) {
             ;Also push to Inventory
@@ -640,14 +635,14 @@ LoadGroup(loadLevel, loadChar) {
               groupIndex := GroupIndex("Inventory")
               If (groupIndex) { ;Inventory exists (common)
                 ; If (addGem1 and addGem2) {
-                  groupList[groupIndex].Push(someGem.name)
+                groupList[groupIndex].Push(someGem.name)
                 ; }
               } Else { ;Make Inventory (once)
                 groupList[groupList.length()+1] := []
                 groupList[groupList.length()].Push("Inventory")
                 groupList[groupList.length()].Push("")
                 ; If (addGem1 and addGem2) {
-                  groupList[groupList.length()].Push(someGem.name)
+                groupList[groupList.length()].Push(someGem.name)
                 ; }
               }
             }
@@ -656,21 +651,19 @@ LoadGroup(loadLevel, loadChar) {
           groupList[groupList.length()].Push("Inventory")
           groupList[groupList.length()].Push("")
           ; If (addGem1 and addGem2) {
-            groupList[groupList.length()].Push(someGem.name)
+          groupList[groupList.length()].Push(someGem.name)
           ; }
         } Else { ;Just a Vendor
           groupList[groupList.length()].Push(thisGroup)
           groupList[groupList.length()].Push(thisGroup)
           ; If (addGem1 and addGem2) {
-            groupList[groupList.length()].Push(someGem.name)
+          groupList[groupList.length()].Push(someGem.name)
           ; }
         }
       }
     }
   }
 }
-
-
 
 GroupIndex(checkGroup) {
   global
@@ -681,7 +674,6 @@ GroupIndex(checkGroup) {
   }
   return 0
 }
-
 
 CheckSave(varLevel) {
   global
@@ -703,7 +695,6 @@ CheckSave(varLevel) {
     return 1
   }
 }
-
 
 SaveBuild() {
   global
@@ -956,7 +947,7 @@ UpdateElements() {
     npcUpdate := %element%npc
     imageUpdate := %element%image
   }
-  
+
   For k, someGem in gemList {
     thisGroup := %element%group
     If (someGem.name = %element%gem) {

@@ -1,9 +1,9 @@
-DrawZone() {
+﻿DrawZone() {
   global
 
   gemFiles := []
-	Loop %A_ScriptDir%\builds\%overlayFolder%\gems\*.ini
-	{
+  Loop %A_ScriptDir%\builds\%overlayFolder%\gems\*.ini
+  {
     tempFileName = %A_LoopFileName%
     If (tempFileName != "meta.ini" and tempFileName != "class.ini") {
       W := MeasureTextWidth(tempFileName, "s" . points . "  w" . boldness, font)
@@ -13,7 +13,7 @@ DrawZone() {
       StringTrimRight, tempFileName, tempFileName, 4
       gemFiles.Push(tempFileName)
     }
-	}
+  }
   gems_width := gems_width + 10
   ;If (gemFiles.length() = 0){ ;If the file didnt exist it just got created, probably empty
   ;  gemFiles := ["02"]
@@ -86,19 +86,19 @@ DrawAtlas() {
         treeW := original_treeW * treeRatio
       }
 
-	    If (treeSide = "Right") {
-		    xTree := A_ScreenWidth - treeW
-	    } else {
-		    xTree := 0
-	    }
-	    yTree := A_ScreenHeight - treeH
+      If (treeSide = "Right") {
+        xTree := A_ScreenWidth - treeW
+      } else {
+        xTree := 0
+      }
+      yTree := A_ScreenHeight - treeH
 
-	    Gui, Tree:+E0x20 +E0x80 -Caption +ToolWindow +LastFound +AlwaysOnTop -Resize -DPIScale +hwndTreeWindow
-	    Gui, Tree:Add, Picture, x0 y0 w%treeW% h%treeH%, %image_file%
+      Gui, Tree:+E0x20 +E0x80 -Caption +ToolWindow +LastFound +AlwaysOnTop -Resize -DPIScale +hwndTreeWindow
+      Gui, Tree:Add, Picture, x0 y0 w%treeW% h%treeH%, %image_file%
 
-	    Gui, Tree:Show, x%xTree% y%yTree% w%treeW% h%treeH% NA, Gui Tree
-	    WinSet, Transparent, 240, ahk_id %TreeWindow%
-	  }
+      Gui, Tree:Show, x%xTree% y%yTree% w%treeW% h%treeH% NA, Gui Tree
+      WinSet, Transparent, 240, ahk_id %TreeWindow%
+    }
   }
 }
 
@@ -140,19 +140,19 @@ DrawTree() {
         treeW := original_treeW * treeRatio
       }
 
-	    If (treeSide = "Right") {
-		    xTree := A_ScreenWidth - treeW
-	    } else {
-		    xTree := 0
-	    }
-	    yTree := A_ScreenHeight - treeH
+      If (treeSide = "Right") {
+        xTree := A_ScreenWidth - treeW
+      } else {
+        xTree := 0
+      }
+      yTree := A_ScreenHeight - treeH
 
-	    Gui, Tree:+E0x20 +E0x80 -Caption +ToolWindow +LastFound +AlwaysOnTop -Resize -DPIScale +hwndTreeWindow
-	    Gui, Tree:Add, Picture, x0 y0 w%treeW% h%treeH%, %image_file%
+      Gui, Tree:+E0x20 +E0x80 -Caption +ToolWindow +LastFound +AlwaysOnTop -Resize -DPIScale +hwndTreeWindow
+      Gui, Tree:Add, Picture, x0 y0 w%treeW% h%treeH%, %image_file%
 
-	    Gui, Tree:Show, x%xTree% y%yTree% w%treeW% h%treeH% NA, Gui Tree
-	    WinSet, Transparent, 240, ahk_id %TreeWindow%
-	  }
+      Gui, Tree:Show, x%xTree% y%yTree% w%treeW% h%treeH% NA, Gui Tree
+      WinSet, Transparent, 240, ahk_id %TreeWindow%
+    }
   }
 }
 
@@ -177,7 +177,7 @@ GetDelimitedPartListString(data, part) {
   For key, partItem in data {
     dList .= partItem . "|"
     If ( InStr(partItem,part) ) {
-    ;If (partItem = part) {
+      ;If (partItem = part) {
       dList .= "|"
     }
   }
@@ -199,14 +199,14 @@ GetDelimitedActListString(data, act, part) {
     currentWatchstones := SubStr(act, 1, 2)
     Loop, 17 ; because there are 16 stones now, this used to be 33 when there were 32 stones
     {
-        watchstoneNumber := A_Index - 1
-        If (watchstoneNumber < 10) {
-          watchstoneNumber := "0" . watchstoneNumber
-        }
-        dList .= watchstoneNumber . " Watchstones|"
-        If (watchstoneNumber = currentWatchstones) {
-          dList .= "|"
-        }
+      watchstoneNumber := A_Index - 1
+      If (watchstoneNumber < 10) {
+        watchstoneNumber := "0" . watchstoneNumber
+      }
+      dList .= watchstoneNumber . " Watchstones|"
+      If (watchstoneNumber = currentWatchstones) {
+        dList .= "|"
+      }
     }
   }
   Return dList
@@ -373,18 +373,18 @@ UpdateImages()
   global
   emptySpaces := 0
   Loop, % maxImages {
-	  imageIndex := (maxImages - A_Index) + 1
+    imageIndex := (maxImages - A_Index) + 1
     StringTrimLeft, ImageName, CurrentZone, 3
     ;MsgBox, % ImageName
     filepath := "" A_ScriptDir "\images\" CurrentAct "\" ImageName "_Seed_" imageIndex ".jpg" ""
 
-	  newIndex := A_index - emptySpaces
-	  ;This shouldn't happen anymore but if this method gets called twice quickly newIndex goes below 0
-	  If (newIndex < 1) {
-	    newIndex := 1
-	  }
+    newIndex := A_index - emptySpaces
+    ;This shouldn't happen anymore but if this method gets called twice quickly newIndex goes below 0
+    If (newIndex < 1) {
+      newIndex := 1
+    }
     Gui, Image%newIndex%:Destroy ;I'm not sure this will work
-    
+
     If (FileExist(filepath)) {
       ;xPos := xPosLayoutParent + ((maxImages - (newIndex + 0)) * (images_width+controlSpace))
       Gui, Image%newIndex%:+E0x20 +E0x80 -DPIScale -resize -SysMenu -Caption +ToolWindow +AlwaysOnTop +hwndImage%newIndex%Window
@@ -409,7 +409,7 @@ UpdateImages()
       Gui, Image%newIndex%:Cancel
     }
     Else {
-	    emptySpaces++
+      emptySpaces++
       ;Have to show the image to make it invisible (in case zone_toggle is off)
       Gui, Image%imageIndex%:Show, NA
       hideId := Image%imageIndex%Window

@@ -58,7 +58,7 @@ ifnotexist,%watchstones%
 
 SetMapNotes()
 {
- Gui, Notes:Destroy
+  Gui, Notes:Destroy
   If (hideNotes != "True") {
     Gui, Notes:+E0x20 +E0x80 -DPIScale -Caption +LastFound +ToolWindow +AlwaysOnTop +hwndNotesWindow
     Gui, Notes:font, c%whiteColor% s%points% w%boldness%, %font%
@@ -89,7 +89,6 @@ SetMapNotes()
     Gui, Notes:Add, Text, xm y%yPosNoteLine%, % val
     numLines++
 
-
     ; ;Layout Rating
     ; val := "Layout Rating: " . Maps[CurrentZone].LayoutRating
 
@@ -112,7 +111,6 @@ SetMapNotes()
     ; Gui, Notes:Add, Text, xm y%yPosNoteLine%, % val
     ; numLines++
 
-
     ; ;Tileset
     ; val := "Tileset: " . Maps[CurrentZone].Tileset
     ; Gui, Notes:font, c%whiteColor%
@@ -125,7 +123,6 @@ SetMapNotes()
     ; yPosNoteLine := (numLines * Ceil(pixels*lineSpacing)) + textMargin
     ; Gui, Notes:Add, Text, xm y%yPosNoteLine%, % val
     ; numLines++
-
 
     ; ;Boss Rating
     ; val := "Boss Rating: " . Maps[CurrentZone].BossRating
@@ -148,7 +145,6 @@ SetMapNotes()
     ; yPosNoteLine := (numLines * Ceil(pixels*lineSpacing)) + textMargin
     ; Gui, Notes:Add, Text, xm y%yPosNoteLine%, % val
     ; numLines++
-
 
     ;Boss
     val := "Boss: " . Maps[CurrentZone].Boss
@@ -206,11 +202,10 @@ SetMapNotes()
   }
 }
 
-
 SetMapGuide()
 {
- Gui, Guide:Destroy
- Gui, Atlas:Destroy
+  Gui, Guide:Destroy
+  Gui, Atlas:Destroy
   If (hideGuide != "True") {
     Gui, Guide:+E0x20 +E0x80 -DPIScale -Caption +LastFound +ToolWindow +AlwaysOnTop +hwndGuideWindow
     Gui, Guide:Font, c%whiteColor% s%points% w%boldness%, %font%
@@ -393,7 +388,6 @@ SetMapGuide()
       }
     }
 
-
     atlas_height := (numLines * Ceil(pixels*lineSpacing)) + (2 * textMargin)
     atlas_width := atlas_width + (2 * textMargin)
     xPosGuide := Round( (A_ScreenWidth * guideXoffset) - guide_width - controlSpace - atlas_width)
@@ -406,6 +400,6 @@ UpdateMapImages() {
   ;For now just clear all the images
   zone_toggle := 0
   Loop, % maxImages {
-      Gui, Image%A_Index%:Cancel
-    }
+    Gui, Image%A_Index%:Cancel
+  }
 }

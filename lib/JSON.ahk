@@ -46,9 +46,9 @@ class JSON
 			this.keys := this.rev ? {} : false
 
 			static q := Chr(34)
-			     , json_value := q . "{[01234567890-tfn"
-			     , json_value_or_array_closing := q . "{[]01234567890-tfn"
-			     , object_key_or_object_closing := q . "}"
+				, json_value := q . "{[01234567890-tfn"
+				, json_value_or_array_closing := q . "{[]01234567890-tfn"
+				, object_key_or_object_closing := q . "}"
 
 			key := ""
 			is_key := false
@@ -75,25 +75,25 @@ class JSON
 
 				} else {
 					if InStr("{[", ch) {
-					; Check if Array() is overridden and if its return value has
-					; the 'IsArray' property. If so, Array() will be called normally,
-					; otherwise, use a custom base object for arrays
+						; Check if Array() is overridden and if its return value has
+						; the 'IsArray' property. If so, Array() will be called normally,
+						; otherwise, use a custom base object for arrays
 						static json_array := Func("Array").IsBuiltIn || ![].IsArray ? {IsArray: true} : 0
-					
-					; sacrifice readability for minor(actually negligible) performance gain
+
+						; sacrifice readability for minor(actually negligible) performance gain
 						(ch == "{")
 							? ( is_key := true
 							  , value := {}
 							  , next := object_key_or_object_closing )
-						; ch == "["
+							; ch == "["
 							: ( value := json_array ? new json_array : []
 							  , next := json_value_or_array_closing )
-						
+
 						ObjInsertAt(stack, 1, value)
 
 						if (this.keys)
 							this.keys[value] := []
-					
+
 					} else {
 						if (ch == q) {
 							i := pos
@@ -117,7 +117,7 @@ class JSON
 							, value := StrReplace(value,    "\t", "`t")
 
 							pos := i ; update pos
-							
+
 							i := 0
 							while (i := InStr(value, "\",, i+1)) {
 								if !(SubStr(value, i+1, 1) == "u")
@@ -132,7 +132,7 @@ class JSON
 								key := value, next := ":"
 								continue
 							}
-						
+
 						} else {
 							value := SubStr(text, pos, i := RegExMatch(text, "[\]\},\s]|$",, pos)-pos)
 
@@ -142,8 +142,8 @@ class JSON
 							else if (value == "true" || value == "false" || value == "null")
 								value := %value% + 0
 							else
-							; we can do more here to pinpoint the actual culprit
-							; but that's just too much extra work.
+								; we can do more here to pinpoint the actual culprit
+								; but that's just too much extra work.
 								this.ParseError(next, text, pos, i)
 
 							pos += i-1
@@ -157,7 +157,7 @@ class JSON
 					if (this.keys && this.keys.HasKey(holder))
 						this.keys[holder].Push(key)
 				}
-			
+
 			} ; while ( ... )
 
 			return this.rev ? this.Walk(root, "") : root[""]
@@ -166,7 +166,7 @@ class JSON
 		ParseError(expect, text, pos, len:=1)
 		{
 			static q := Chr(34)
-			
+
 			line := StrSplit(SubStr(text, 1, pos), "`n", "`r").Length()
 			col := pos - InStr(text, "`n",, -(StrLen(text)-pos+1))
 			msg := Format("{1}`n`nLine:`t{2}`nCol:`t{3}`nChar:`t{4}"
@@ -192,24 +192,24 @@ class JSON
 			if IsObject(value)
 				for i, k in this.keys[value]
 					value[k] := this.Walk.Call(this, value, k) ; bypass __Call
-			
+
 			return this.rev.Call(holder, key, value)
 		}
 	}
 
-	/**
-	 * Method: Dump
-	 *     Converts an AHK value into a JSON string
-	 * Syntax:
-	 *     str := JSON.Dump( value [, replacer, space ] )
-	 * Parameter(s):
-	 *     str        [retval] - JSON representation of an AHK value
-	 *     value          [in] - any value(object, string, number)
-	 *     replacer  [in, opt] - function object, similar to JavaScript's
-	 *                           JSON.stringify() 'replacer' parameter
-	 *     space     [in, opt] - similar to JavaScript's JSON.stringify()
-	 *                           'space' parameter
-	 */
+						/**
+						 * Method: Dump
+						 *     Converts an AHK value into a JSON string
+						 * Syntax:
+						 *     str := JSON.Dump( value [, replacer, space ] )
+						 * Parameter(s):
+						 *     str        [retval] - JSON representation of an AHK value
+						 *     value          [in] - any value(object, string, number)
+						 *     replacer  [in, opt] - function object, similar to JavaScript's
+						 *                           JSON.stringify() 'replacer' parameter
+						 *     space     [in, opt] - similar to JavaScript's JSON.stringify()
+						 *                           'space' parameter
+						 */
 	class Dump extends JSON.Functor
 	{
 		Call(self, value, replacer:="", space:="")
@@ -258,7 +258,7 @@ class JSON
 					Loop, % value.Length() {
 						if (this.gap)
 							str .= this.indent
-						
+
 						str .= value.HasKey(A_Index) ? this.Str(value, A_Index) . "," : "null,"
 					}
 				} else {
@@ -313,9 +313,9 @@ class JSON
 	{
 		__Call(method, args*)
 		{
-		; When casting to Call(), use a new instance of the "function object"
-		; so as to avoid directly storing the properties(used across sub-methods)
-		; into the "function object" itself.
+			; When casting to Call(), use a new instance of the "function object"
+			; so as to avoid directly storing the properties(used across sub-methods)
+			; into the "function object" itself.
 			if IsObject(method)
 				return (new this).Call(method, args*)
 			else if (method == "")

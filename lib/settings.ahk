@@ -37,8 +37,6 @@ LaunchSettings() {
   Gui, Settings:Add, Text, w%nameWidth% h%optionHeight% y+5, Gem Spacing ;Static17
   Gui, Settings:Add, Text, w%nameWidth% h%optionHeight% y+5, Layout Pics Scale ;Static18
 
-
-
   ;Second Column Option Edits
   Gui, Settings:Add, Edit, vpoints w%optionWidth% h%optionHeight% x+5 y36, %points%
   Gui, Settings:Add, ComboBox, vfont w%optionWidth% h%dropDownHeight% y+5, % GetFont(font)
@@ -58,9 +56,6 @@ LaunchSettings() {
   Gui, Settings:Add, Edit, vmaxLinksWidth w%optionWidth% h%optionHeight% y+5, %maxLinksWidth%
   Gui, Settings:Add, Edit, vgemSpacing w%optionWidth% h%optionHeight% y+5, %gemSpacing%
   Gui, Settings:Add, Edit, vimageSizeMultiplier w%optionWidth% h%optionHeight% y+5, %imageSizeMultiplier%
-  
-
-
 
   ;HotKeys
   Gui, Settings:Add, Text, w%nameWidth% h%optionHeight% x230 y10, Hotkeys ;Static19
@@ -91,7 +86,6 @@ LaunchSettings() {
   Gui, Settings:Add, Text, w%offsetWidth% h%optionHeight% y+5, Level Y ;Static38
   Gui, Settings:Add, Text, w%offsetWidth% h%optionHeight% y+5, Gems Y ;Static39
 
-
   ;Fourth Column Hotkey Key
   Gui, Settings:Add, Hotkey, vKeySettings w%nameWidth% h%optionHeight% x345 y36, %KeySettings%
   Gui, Settings:Add, Hotkey, vKeyHideLayout w%nameWidth% h%optionHeight% y+5, %KeyHideLayout%
@@ -116,7 +110,6 @@ LaunchSettings() {
   Gui, Settings:Add, Edit, vlevelYoffset w%offsetWidth% h%optionHeight% y+5, %levelYoffset%
   Gui, Settings:Add, Edit, vgemsYoffset w%offsetWidth% h%optionHeight% y+5, %gemsYoffset%
 
-
   ;Build
   Gui, Settings:Add, Text, w80 h%optionHeight% x490 y10, Build ;Static40
 
@@ -134,8 +127,6 @@ LaunchSettings() {
   Gui, Settings:Add, Button, gBrowseNotes w%nameWidth% h%optionHeight% x+5, &Browse
   Gui, Settings:Add, Edit, vnewBuildName w%nameWidth% h%optionHeight% x565 y+5, %newBuildName%
   Gui, Settings:Add, Button, gNewBuild w%nameWidth% h%optionHeight% x+5, &New Build
-
-
 
   ;Colors
   Gui, Settings:Add, Text, w80 h%optionHeight% x490 y161, Colors ;Static45
