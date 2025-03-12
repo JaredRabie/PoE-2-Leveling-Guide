@@ -1,4 +1,4 @@
-#SingleInstance, force
+﻿#SingleInstance, force
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
@@ -185,41 +185,41 @@ If (skipGemImages = "False") {
 progressWidth := gem_data.length()
 
 For key, someGem in gem_data {
-  gemList[gemList.length()+1] := Object()
-  gemList[gemList.length()].name := someGem.name
-  tempColor := someGem.color
-  gemList[gemList.length()].color := %tempColor%Color ;Use the settings color
-  gemList[gemList.length()].cost := someGem.cost
-  gemList[gemList.length()].vendor := someGem.vendor
-  gemList[gemList.length()].lvl := someGem.required_lvl
-  gemList[gemList.length()].url := "" "\images\gems\" someGem.name ".png"  ""
-  
-  image_file := "" A_ScriptDir "\images\gems\" someGem.name ".png"  ""
-  icon_url := someGem.iconPath
-  If (!FileExist(image_file) and icon_url!="") {
-    If (downloadApproved = "True") {
-      UrlDownloadToFile, %icon_url%, %image_file%
-      progressPercent := 100 * (A_Index/progressWidth)
-      Progress, %progressPercent%
-    } Else If (downloadApproved = "False") {
-      ;do nothing
-    } ;Else { ;commenting this for now because no I do not want to download POE1 gems in my POE2 overlay
-    ;MsgBox, 3,, You are missing some gem image files,`nwould you like to download them?`n`nTHIS COULD TAKE A FEW MINUTES!
-    ;IfMsgBox Yes
-    ;{
-    ;  downloadApproved := "True"
-    ;  UrlDownloadToFile, %icon_url%, %image_file%
-    ;  Progress, b w%progressWidth%, Please don't stop the download until complete, Downloading Gem Images
-    ;  progressPercent := 100 * (A_Index/progressWidth)
-    ;  Progress, %progressPercent%
-    ;} Else IfMsgBox No
-    ;{
-    ;  downloadApproved := "False"
-    ;} Else {
-    ;  ExitApp
-    ;}
-   ;}
-  }
+	gemList[gemList.length()+1] := Object()
+	gemList[gemList.length()].name := someGem.name
+	tempColor := someGem.color
+	gemList[gemList.length()].color := %tempColor%Color ;Use the settings color
+	gemList[gemList.length()].cost := someGem.cost
+	gemList[gemList.length()].vendor := someGem.vendor
+	gemList[gemList.length()].lvl := someGem.required_lvl
+	gemList[gemList.length()].url := "" "\images\gems\" someGem.name ".png"  ""
+
+	image_file := "" A_ScriptDir "\images\gems\" someGem.name ".png"  ""
+	icon_url := someGem.iconPath
+	If (!FileExist(image_file) and icon_url!="") {
+		If (downloadApproved = "True") {
+			UrlDownloadToFile, %icon_url%, %image_file%
+			progressPercent := 100 * (A_Index/progressWidth)
+			Progress, %progressPercent%
+		} Else If (downloadApproved = "False") {
+			;do nothing
+		} ;Else { ;commenting this for now because no I do not want to download POE1 gems in my POE2 overlay
+		;MsgBox, 3,, You are missing some gem image files,`nwould you like to download them?`n`nTHIS COULD TAKE A FEW MINUTES!
+		;IfMsgBox Yes
+		;{
+		;  downloadApproved := "True"
+		;  UrlDownloadToFile, %icon_url%, %image_file%
+		;  Progress, b w%progressWidth%, Please don't stop the download until complete, Downloading Gem Images
+		;  progressPercent := 100 * (A_Index/progressWidth)
+		;  Progress, %progressPercent%
+		;} Else IfMsgBox No
+		;{
+		;  downloadApproved := "False"
+		;} Else {
+		;  ExitApp
+		;}
+		;}
+	}
 }
 Progress, Off
 
