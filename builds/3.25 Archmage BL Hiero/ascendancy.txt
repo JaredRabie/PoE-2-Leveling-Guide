@@ -1,5 +1,0 @@
-﻿zone:Aspirants' Plaza
-1. Arcane Blessing
-2. Divine Guidance
-3. Sanctuary of Thought
-4. Illuminated Devotion
