@@ -1,4 +1,4 @@
-﻿DrawZone() {
+DrawZone() {
   global
 
   gemFiles := []
@@ -18,6 +18,8 @@
   ;If (gemFiles.length() = 0){ ;If the file didnt exist it just got created, probably empty
   ;  gemFiles := ["02"]
   ;}
+
+  test := % GetDelimitedZoneListString(data.zones, CurrentAct)
 
   Gui, Controls:+E0x20 +E0x80 -DPIScale -Caption +LastFound +ToolWindow +AlwaysOnTop +hwndControls
   Gui, Controls:Color, %backgroundColor%
@@ -154,8 +156,6 @@ DrawTree() {
   }
 }
 
-
-
 DrawExp(){
   global
 
@@ -172,8 +172,6 @@ DrawExp(){
   Gui, Exp:Show, x%xPosExp% y%yPosExp% w%exp_width% h%control_height% NA, Gui Exp
 }
 
-
-
 GetDelimitedPartListString(data, part) {
   dList := ""
   For key, partItem in data {
@@ -185,8 +183,6 @@ GetDelimitedPartListString(data, part) {
   }
   Return dList
 }
-
-
 
 GetDelimitedActListString(data, act, part) {
   dList := ""
@@ -216,8 +212,6 @@ GetDelimitedActListString(data, act, part) {
   Return dList
 }
 
-
-
 GetDelimitedZoneListString(data, act) {
   dList := ""
   If (numPart != 3) {
@@ -242,8 +236,6 @@ GetDelimitedZoneListString(data, act) {
   }
   Return dList
 }
-
-
 
 partSelectUI() {
   global
@@ -293,8 +285,6 @@ partSelectUI() {
   SaveState()
 }
 
-
-
 actSelectUI() {
   global
   Gui, Controls:Submit, NoHide
@@ -335,8 +325,6 @@ actSelectUI() {
   SaveState()
 }
 
-
-
 zoneSelectUI() {
   global
   Gui, Controls:Submit, NoHide
@@ -357,16 +345,12 @@ zoneSelectUI() {
   SaveState()
 }
 
-
-
 levelSelectUI() {
   global
   Gui, Level:Submit, NoHide
   SetExp()
   SaveState()
 }
-
-
 
 gemSelectUI() {
   global
@@ -376,8 +360,6 @@ gemSelectUI() {
   SaveState()
 }
 
-
-
 GetDefaultZone(zones, act) {
   For key, zoneGroup in zones {
     If (zoneGroup.act = act) {
@@ -385,8 +367,6 @@ GetDefaultZone(zones, act) {
     }
   }
 }
-
-
 
 UpdateImages()
 {

@@ -1,8 +1,9 @@
-﻿#SingleInstance, force
+#SingleInstance, force
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
+;region - Check AHK Version Compatibilty
 requiredVer := "1.1.30.03", unicodeOrAnsi := A_IsUnicode?"Unicode":"ANSI", 32or64bits := A_PtrSize=4?"32bits":"64bits"
 If (!A_IsUnicode) {
   Run,% "https://www.autohotkey.com/"
@@ -41,13 +42,13 @@ If (A_AhkVersion >= "2.0")
   . "`n"
   ExitApp
 }
+;endregion
 
 #Include, %A_ScriptDir%\lib\JSON.ahk
 #Include, %A_ScriptDir%\lib\Gdip.ahk
 
 ;Menu
 Menu, Tray, NoStandard
-
 Menu, Tray, Tip, PoE Leveling Guide
 Menu, Tray, Add, Settings, LaunchSettings
 Menu, Tray, Add, Edit Build, LaunchBuild
@@ -55,7 +56,7 @@ Menu, Tray, Add
 Menu, Tray, Add, Reload, PLGReload
 Menu, Tray, Add, Close, PLGClose
 
-; Icons
+;Icons
 Menu, Tray, Icon, %A_ScriptDir%\icons\lvlG.ico
 Menu, Tray, Icon, Settings, %A_ScriptDir%\icons\gear.ico
 Menu, Tray, Icon, Reload, %A_ScriptDir%\icons\refresh.ico
@@ -73,6 +74,7 @@ GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExi
 GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExilex64EGS.exe
 GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExile_x64Steam.exe
 
+;Read data.json - contains part, act, zone level, zone code, and zone name.
 global data := {}
 Try {
     FileRead, JSONFile, %A_ScriptDir%\lib\data.json
@@ -86,16 +88,20 @@ Try {
     ExitApp
 }
 
-global monsterLevel := "01"
+;Many global vars are declared in these #Include statements.
+global monsterLevel := "0"
 #Include, %A_ScriptDir%\lib\config.ahk
 #Include, %A_ScriptDir%\lib\settings.ahk
 #Include, %A_ScriptDir%\lib\sizing.ahk
 
+monsterLevel := StrSplit(CurrentZone, " ")[1] ;AHK index starts at 1
+
+;Check for updates
 If (skipUpdates = "False") {
   versionFile = %A_ScriptDir%\filelist.txt
   If (!FileExist(versionFile)) {
     updatePLG := "True"
-    oldVersion := "4.0.3"
+    oldVersion := "0.0.0"
     UrlDownloadToFile, https://raw.githubusercontent.com/JusKillmeQik/PoE-Leveling-Guide/main/filelist.txt, %A_ScriptDir%\filelist.txt
   } Else {
     FileReadLine, oldVersion, %A_ScriptDir%\filelist.txt, 1
@@ -236,7 +242,6 @@ WinGet, PoEWindowHwnd, ID, ahk_group PoEWindowGrp
 
 global onStartup := 1
 
-;#Include, %A_ScriptDir%\lib\maps.ahk
 #Include, %A_ScriptDir%\lib\draw.ahk
 DrawZone()
 DrawTree()
@@ -273,7 +278,6 @@ InitLogFile(filepath){
     global log := client_txt_file.Read() ; should be empty now and redundant
 }
 
-
 ShowGuiTimer:
   poe_active := WinActive("ahk_id" PoEWindowHwnd)
   controls_active := WinActive("ahk_id" . Controls) ; Wow that dot is important!
@@ -301,13 +305,6 @@ ShowGuiTimer:
     active_toggle := 1
   }
 
-  ;This shows the guide if you put your mouse in the top right corner, it triggers too often and isn't helpful
-  ; MouseGetPos, xposMouse, yposMouse
-  ; If (yposMouse < 10 and xposMouse > A_ScreenWidth-Round(A_ScreenWidth/4)) {
-  ;   activeCount := 0
-  ;   active_toggle := 1
-  ; }
-
   If (poe_active or controls_active or level_active or gems_active) {
     ; show all gui windows
     GoSub, ShowAllWindows
@@ -324,6 +321,7 @@ ShowGuiTimer:
     ;The PoEWindow doesn't stay active through a restart, so must wait for it to be open
     closed := 0
 
+    ;region - Look for a running Path Of Exile window
     Process, Exist, PathOfExile.exe
     If(!errorlevel) {
       closed++
@@ -413,6 +411,7 @@ ShowGuiTimer:
       StringTrimRight, client, client, 21
       client .= "logs\Client.txt"
     }
+    ;endregion
 
     If (closed = 10){
       GoSub, HideAllWindows
@@ -526,7 +525,6 @@ HideAllWindows:
   Gui, Gems:Cancel
   Gui, Links:Cancel
 return
-
 
 GetProcessPath(exe) {
   for process in ComObjGet("winmgmts:").ExecQuery("Select * from Win32_Process where name ='" exe "'")

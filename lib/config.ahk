@@ -1,4 +1,4 @@
-﻿global overlayFolder := "3.13 Gladiator Bleed Bow"
+﻿global overlayFolder := "Select A Build"
 global notesFolder := "Default"
 
 global points := 9
@@ -71,8 +71,8 @@ global active_toggle := 1
 global numPart := 1
 global CurrentPart = "Part 1"
 global CurrentAct = "Act 1"
-global CurrentZone = "01 Twilight Strand"
-global LastLogLines = "Generating level 1 area ""Twilight Strand"""
+global CurrentZone = "1 G1_1 The Riverbank"
+global LastLogLines = "Generating level 1 area ""G1_1"""
 global CurrentLevel = "01"
 global CurrentGem = "02"
 global trigger := 0
@@ -155,50 +155,9 @@ INIMeta=%A_scriptdir%\builds\%overlayFolder%\gems\meta.ini
 IniRead, numPart, %INIMeta%, State, numPart, %numPart%
 IniRead, CurrentPart, %INIMeta%, State, CurrentPart, %CurrentPart%
 
-;Backwards compatibility
-If (CurrentPart = "Part I") {
-  CurrentPart := "Part 1"
-}
-If (CurrentPart = "Part II") {
-  CurrentPart := "Part 2"
-}
-
 IniRead, CurrentAct, %INIMeta%, State, CurrentAct, %CurrentAct%
 
-;Backwards compatibility
-If (CurrentAct = "Act I") {
-  CurrentAct := "Act 1"
-}
-If (CurrentAct = "Act II") {
-  CurrentAct := "Act 2"
-}
-If (CurrentAct = "Act III") {
-  CurrentAct := "Act 3"
-}
-If (CurrentAct = "Act IV") {
-  CurrentAct := "Act 4"
-}
-If (CurrentAct = "Act V") {
-  CurrentAct := "Act 5"
-}
-If (CurrentAct = "Act VI") {
-  CurrentAct := "Act 6"
-}
-If (CurrentAct = "Act VII") {
-  CurrentAct := "Act 7"
-}
-If (CurrentAct = "Act VIII") {
-  CurrentAct := "Act 8"
-}
-If (CurrentAct = "Act IX") {
-  CurrentAct := "Act 9"
-}
-If (CurrentAct = "Act X") {
-  CurrentAct := "Act 10"
-}
-
 IniRead, CurrentZone, %INIMeta%, State, CurrentZone, %CurrentZone%
-monsterLevel := SubStr(CurrentZone, 1, 2)
 IniRead, CurrentLevel, %INIMeta%, State, CurrentLevel, %CurrentLevel%
 IniRead, CurrentGem, %INIMeta%, State, CurrentGem, %CurrentGem%
 IniRead, zone_toggle, %INIMeta%, State, zone_toggle, %zone_toggle%

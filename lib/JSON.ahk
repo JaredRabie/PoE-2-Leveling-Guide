@@ -16,7 +16,6 @@
  *     Email:      - cocobelgica <at> gmail <dot> com
  */
 
-
 /**
  * Class: JSON
  *     The JSON object contains methods for parsing JSON and converting values

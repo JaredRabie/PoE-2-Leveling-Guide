@@ -1,4 +1,4 @@
-﻿SetNotes()
+SetNotes()
 {
   Gui, Notes:Destroy
   If (hideNotes != "True") {
@@ -16,7 +16,8 @@
     If (!FileExist(filepath)){
       filepath := "" A_ScriptDir "\builds\Notes\" notesFolder "\" CurrentAct "\notes.txt" ""
     }
-    StringTrimLeft, ZoneName, CurrentZone, 3
+    ;CurrentZone looks like "C_G2_5_1 Mastodon Badlands", ZoneName needs to just be "Mastodon Badlands".
+    StringTrimLeft, ZoneName, CurrentZone, InStr(CurrentZone, " ") ;Trim up to and including the first space. This will get rid of area code.
     ZoneName := "zone:" + ZoneName
     ReadLines := "False"
     ZoneLine := []
@@ -250,7 +251,6 @@ SetExp()
     }
   }
   
-
   If (monsterLevel = 71) {
     monsterLevel = 70.94
   } Else If (monsterLevel = 72) {
@@ -315,7 +315,6 @@ SetExp()
 
   Gui, Exp:Show, x%xPosExp% y%yPosExp% w%exp_width% h%control_height% NA, Gui Exp
 }
-
 
 SetGems()
 {
