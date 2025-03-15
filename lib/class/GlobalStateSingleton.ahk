@@ -8,10 +8,16 @@
 ;the exact wording of all the global variables, autocomplete from this class makes it easy.
 
 class GlobalStateSingleton {
-    __New() {
-        This.ProjectRootDirectory := ProjectRootDirectory ;TODO stop using this global variable, only set it on this class.
+    __New(projectRootDirectory) {
+        This.ProjectRootDirectory := projectRootDirectory
         This.OverlayFolder := overlayFolder ;TODO stop using this global var
 
+    }
+
+    InitialiseClasses() {
+        ;This should be called something better, basically we need GLobalState.stuff to be able to initialise
+        ;these classes but that isn't available until GlobalState is intialised, so these can't just go in the
+        ;__New above.
         This.ZoneData := new ZoneDataClass
         This.ClientReader := new ClientReaderClass
         This.LevelTracker := new LevelTrackerClass
@@ -21,7 +27,7 @@ class GlobalStateSingleton {
         This.ProjectRootDirectory := projectRootDirectory
     }
 
-    SetProjectRootDirectory(overlayFolder) {
+    SetOverlayFolderDirectory(overlayFolder) {
         This.OverlayFolder := overlayFolder
     }
 

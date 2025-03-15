@@ -15,7 +15,7 @@ Class LevelTrackerClass {
         This.MonsterLevelInt := 1
         This.MonsterLevelString := "01"
 
-        INIMeta = %GlobalState.ProjectRootDirectory%\builds\%GlobalState.OverlayFolder%\gems\meta.ini
+        INIMeta = %GlobalState.ProjectRootDirectory%\builds\%GlobalState.OverlayFolder%\meta.ini
         IniRead, PlayerLevelInt, %INIMeta%, State, PlayerLevelInt, %PlayerLevelInt%
         IniRead, MonsterLevelInt, %INIMeta%, State, MonsterLevelInt, %MonsterLevelInt%
 

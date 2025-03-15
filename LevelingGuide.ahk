@@ -1,8 +1,7 @@
 ﻿#SingleInstance, force
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
-global ProjectRootDirectory := A_ScriptDir ;LevelingGuide.ahk should sit at the top of this project.
-SetWorkingDir ProjectRootDirectory ; Ensures a consistent starting directory.
+SetWorkingDir A_ScriptDir ; Ensures a consistent starting directory.
 
 global client_txt_file := ""
 ;Check version is compatible before we do anything else.
@@ -29,15 +28,16 @@ CheckAHKVersionCompatibility()
 #Include, %A_ScriptDir%\lib\hotkeys.ahk
 
 ;Initialise Global State
-;constructor for this class includes all necessary initialisation, including
-; - reading ZoneReference.json to load GlobalState.ZoneData.ZoneReference and ini files
-;       for most recent part-act-zone combo.
+;constructor for this class includes all necessary initialisation
 ;TODO: Add gems to this object
 ;TODO: Add global settings? at least feature flag/options, eg shouldUpdate or whatever
+;TODO: Currently I am relying on OverlayFolder being loaded in
 ;Candidates for global settings:
 ; - shouldUpdate
 #Include, %A_ScriptDir%\lib\class\GlobalStateSingleton.ahk
-global GlobalState := new GlobalStateSingleton
+projectRootDirectory := A_ScriptDir
+global GlobalState := new GlobalStateSingleton(projectRootDirectory)
+GlobalState.InitialiseClasses()
 
 ;Need to put this on GlobalState when I deal with gem setups.
 global gem_data := {}
@@ -53,7 +53,7 @@ Try {
 	ExitApp
 }
 
-;Menu
+;Menu - shows when the tray icon is right clicked.
 Menu, Tray, NoStandard
 Menu, Tray, Tip, PoE Leveling Guide
 Menu, Tray, Add, Settings, LaunchSettings

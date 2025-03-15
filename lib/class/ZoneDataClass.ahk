@@ -13,7 +13,7 @@ Class ZoneDataClass {
         This.CurrentZone := "The Riverbank"
         This.LastLogLines := "Generating level 1 area ""G1_1"""
 
-        INIMeta = %GlobalState.ProjectRootDirectory%\builds\%GlobalState.OverlayFolder%\gems\meta.ini
+        INIMeta = Format("{1}\builds\{2}\meta.ini", GlobalState.GetProjectRootDirectory(), GlobalState.GetOverlayFolder())
         IniRead, CurrentPartNumber, %INIMeta%, State, CurrentPartNumber, %CurrentPartNumber%
         IniRead, CurrentPart, %INIMeta%, State, CurrentPart, %CurrentPart%
         IniRead, CurrentAct, %INIMeta%, State, CurrentAct, %CurrentAct%
@@ -52,32 +52,33 @@ Class ZoneDataClass {
         {
             IfInString, newZone, %areaCode%
             {
-                This.LastLogLines := StrReplace(newLogLines, "`r`n")
-
                 ;Choose the part
                 newPart := isCruel ? "Part 2" : "Part 1"
                 if (newPart <> This.CurrentPart)
                 {
                     numPart := isCruel ? 2 : 1
+                    CurrentPart := newPart ;TODO stop needing this global var
                     This.CurrentPart := newPart
-                    GuiControl, Controls:Choose, This.CurrentPart, % "|" newPart
+                    GuiControl, Controls:Choose, CurrentPart, % "|" newPart
                 }
 
                 ;Choose the act
                 newAct := act.act
                 If (newAct <> This.CurrentAct)
                 {
-                    This.CurrentAct := newAct
-                    GuiControl, Controls:Choose, This.CurrentAct, % "|" newAct
+                    CurrentAct := newAct
+                    This.CurrentAct := newAct ;TODO stop needing this global var
+                    GuiControl, Controls:Choose, CurrentAct, % "|" newAct
                 }
 
                 ;Choose the zone
                 If (newZone <> This.CurrentZone)
                 {
+                    CurrentZone := newZone ;TODO stop needing this global var
                     This.CurrentZone := newZone
                     ;We have to match the zones in the dropdown which have the area code trimmed so that it's pretty
                     StringTrimLeft, trimmedNewZone, newZone, InStr(newZone, " ")
-                    GuiControl, Controls:Choose, This.CurrentZone, % "|" trimmedNewZone
+                    GuiControl, Controls:Choose, CurrentZone, % "|" trimmedNewZone
                     UpdateImages()
                 }
 
@@ -138,8 +139,9 @@ Class ZoneDataClass {
     }
 }
 
-;Have to put these methods here to avoid error Call to nonexistent function.
-;Would put them in the class :(
+;Have to put these methods here to avoid error: Call to nonexistent function.
+;Would put them in the class :( Could do GlobalState.ZoneData.ThisMethodHere() in methods above but that would require
+;intialisation first, and this is an initialisation step. Would get messy.
 ReadReferenceDataFromJSON() {
     ;Read This.ZoneReference.json - contains part, act, zone level, zone code, and zone name.
     ZoneReference := {}

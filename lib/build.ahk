@@ -309,8 +309,8 @@ ReadGemFile(fileLevel) {
   }
   ;*** Create INI if not exist
   INIGem=%A_scriptdir%\builds\%overlayFolder%\gems\%fileName%.ini
-  INIMeta=%A_scriptdir%\builds\%overlayFolder%\gems\meta.ini
-  INIClass=%A_scriptdir%\builds\%overlayFolder%\gems\class.ini
+  INIMeta=%A_scriptdir%\builds\%overlayFolder%\meta.ini
+  INIClass=%A_scriptdir%\builds\%overlayFolder%\class.ini
   newFileCreated := 0
   ifnotexist,%INIGem%
   {
@@ -446,8 +446,8 @@ SaveGemFile(fileLevel) {
   }
 
   INIGem=%A_scriptdir%\builds\%overlayFolder%\gems\%fileName%.ini
-  INIMeta=%A_scriptdir%\builds\%overlayFolder%\gems\meta.ini
-  INIClass=%A_scriptdir%\builds\%overlayFolder%\gems\class.ini
+  INIMeta=%A_scriptdir%\builds\%overlayFolder%\meta.ini
+  INIClass=%A_scriptdir%\builds\%overlayFolder%\class.ini
   IniWrite, %charClass%, %INIClass%, Build, class
   IniWrite, %charName%, %INIMeta%, Build, name
   For k, someControl in controlList {
@@ -862,7 +862,7 @@ UpdateControl() {
     Gui, Build:Submit, NoHide ;this gets the newly selected gem level
 
     ;incase nothing else changed, save the build class change
-    INIClass=%A_scriptdir%\builds\%overlayFolder%\gems\class.ini
+    INIClass=%A_scriptdir%\builds\%overlayFolder%\class.ini
     IniWrite, %charClass%, %INIClass%, Build, class
 
     ReadGemFile(gemLevel)

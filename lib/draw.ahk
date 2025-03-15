@@ -17,7 +17,7 @@
   gems_width := gems_width + 10
   ;If (gemFiles.length() = 0){ ;If the file didnt exist it just got created, probably empty
   ;  gemFiles := ["02"]
-  ;} 
+  ;}
 
   Gui, Controls:+E0x20 +E0x80 -DPIScale -Caption +LastFound +ToolWindow +AlwaysOnTop +hwndControls
   Gui, Controls:Color, %backgroundColor%
@@ -237,96 +237,106 @@ GetDelimitedZoneListString(zoneReference, act) {
   Return dList
 }
 
+;Executed whenever the part is changed in the zone tracker gui
+;This happens before the GUI is updated, and does not include the GUI actually switching to the new part
+;Basically just need to update the list of possible acts, to do that have to select one, if I selected an act I should
+;populate the zones, to do that I have to select one.
 partSelectUI() {
-  global
-  Gui, Controls:Submit, NoHide
+  ;don't rlly need this next line I'll just populate the act dropdown and leave it blank, whenever I update part
+  ;I should be updating zone.
+  ;newAct := GlobalState.GetZoneData().CurrentPart == "Part 1" ? GlobalState.GetZoneData().ZoneReference.p1acts[1] : GlobalState.GetZoneData().ZoneReference.p2acts[1]
+  GuiControl,,CurrentAct, % "|" GlobalState.GetZoneData().GetActsInCurrentPart()
+  ;global
+  ; Gui, Controls:Submit, NoHide
 
-  If (CurrentPart = "Part 1") {
-    CurrentAct := "Act 1"
-    numPart := 1
-  } Else If (CurrentPart = "Part 2") {
-    CurrentAct := "Act 6"
-    numPart := 2
-  } Else {
-    INIStones=%A_scriptdir%\watchstones.ini
-    IniRead, CurrentAct, %INIStones%, Watchstones, collected, "00 Watchstones"
-    CurrentZone := "Academy Map"
-    numPart := 3
-    ; Gui, Notes:Cancel
-    ; Gui, Guide:Cancel
-  }
+  ; If (CurrentPart = "Part 1") {
+  ;   CurrentAct := "Act 1"
+  ;   numPart := 1
+  ; } Else If (CurrentPart = "Part 2") {
+  ;   CurrentAct := "Act 6"
+  ;   numPart := 2
+  ; } Else {
+  ;   INIStones=%A_scriptdir%\watchstones.ini
+  ;   IniRead, CurrentAct, %INIStones%, Watchstones, collected, "00 Watchstones"
+  ;   CurrentZone := "Academy Map"
+  ;   numPart := 3
+  ;   ; Gui, Notes:Cancel
+  ;   ; Gui, Guide:Cancel
+  ; }
 
-  GuiControl,,CurrentAct, % "|" test := GetDelimitedActListString(GlobalState.ZoneData.ZoneReference.ZoneReference.zones, CurrentAct, CurrentPart)
-  Sleep 100
+  ; GuiControl,,CurrentAct, % "|" test := GlobalState.GetZoneData().GetActsInCurrentPart()
+  ; Sleep 100
 
-  If (numPart != 3) {
-    CurrentZone := GetDefaultZone(GlobalState.ZoneData.ZoneReference.ZoneReference.zones, CurrentAct)
-  }
-  GuiControl,,CurrentZone, % "|" test := GetDelimitedZoneListString(GlobalState.ZoneData.ZoneReference.ZoneReference.zones, CurrentAct)
-  Sleep 100
-  If (numPart != 3) {
-    SetGuide()
-    SetNotes()
-    If (zone_toggle = 1) {
-      UpdateImages()
-    }
-  } Else {
-    ;SetMapGuide()
-    ;SetMapNotes()
-    If (zone_toggle = 1) {
-      ;UpdateMapImages()
-    }
-  }
-  SetExp()
+  ; If (numPart != 3) {
+  ;   CurrentZone := GetDefaultZone(GlobalState.ZoneData.ZoneReference.ZoneReference.zones, CurrentAct)
+  ; }
+  ; GuiControl,,CurrentZone, % "|" test := GetDelimitedZoneListString(GlobalState.ZoneData.ZoneReference.ZoneReference.zones, CurrentAct)
+  ; Sleep 100
+  ; If (numPart != 3) {
+  ;   SetGuide()
+  ;   SetNotes()
+  ;   If (zone_toggle = 1) {
+  ;     UpdateImages()
+  ;   }
+  ; } Else {
+  ;   ;SetMapGuide()
+  ;   ;SetMapNotes()
+  ;   If (zone_toggle = 1) {
+  ;     ;UpdateMapImages()
+  ;   }
+  ; }
+  ; SetExp()
 
-  trigger := 1
-  WinActivate, ahk_id %PoEWindowHwnd%
+  ; trigger := 1
+  ; WinActivate, ahk_id %PoEWindowHwnd%
 
-  SaveState()
+  ; SaveState()
 }
 
 actSelectUI() {
-  global
-  Gui, Controls:Submit, NoHide
+  GuiControl,,CurrentZone, % "|" GlobalState.GetZoneData().GetZonesInCurrentAct()
+  ; global
+  ; Gui, Controls:Submit, NoHide
 
-  If (numPart != 3){
-    CurrentZone := GetDefaultZone(GlobalState.ZoneData.ZoneReference.ZoneReference.zones, CurrentAct)
-    GuiControl,,CurrentZone, % "|" test := GetDelimitedZoneListString(GlobalState.ZoneData.ZoneReference.ZoneReference.zones, CurrentAct)
-    Sleep 100
-    SetGuide()
-    SetNotes()
-    If (zone_toggle = 1) {
-      UpdateImages()
-    }
-  } Else { ;This shouldn't happen for this version until we re-enable maps
-    ;Save watchstone and conq info
-    INIStones=%A_scriptdir%\watchstones.ini
-    IniWrite, %CurrentAct%, %INIStones%, Watchstones, collected
-    For key, value in Conquerors {
-      output := value.Region
-      IniWrite, %output%, %INIStones%, %key%, region
-      output := value.Appearances
-      IniWrite, %output%, %INIStones%, %key%, appearances
-    }
+  ; If (numPart != 3){
+  ;   CurrentZone := GetDefaultZone(GlobalState.GetZoneData().ZoneReference.zones, CurrentAct)
+  ;   GuiControl,,CurrentZone, % "|" test := GetDelimitedZoneListString(GlobalState.GetZoneData().ZoneReference.zones, CurrentAct)
+  ;   Sleep 100
+  ;   SetGuide()
+  ;   SetNotes()
+  ;   If (zone_toggle = 1) {
+  ;     UpdateImages()
+  ;   }
+  ; } Else { ;This shouldn't happen for this version until we re-enable maps
+  ;   ;Save watchstone and conq info
+  ;   INIStones=%A_scriptdir%\watchstones.ini
+  ;   IniWrite, %CurrentAct%, %INIStones%, Watchstones, collected
+  ;   For key, value in Conquerors {
+  ;     output := value.Region
+  ;     IniWrite, %output%, %INIStones%, %key%, region
+  ;     output := value.Appearances
+  ;     IniWrite, %output%, %INIStones%, %key%, appearances
+  ;   }
 
-    ; INIAtlas=%A_scriptdir%\maps\atlas.ini
-    ; For key, value in Regions {
-    ;   IniRead, numStones, %INIAtlas%, %CurrentAct%, %key%, 0
-    ;   value.SocketedStones := numStones
-    ; }
-    ;SetMapGuide()
-    ;SetMapNotes()
-    If (zone_toggle = 1) {
-      ;UpdateMapImages()
-    }
-  }
-  SetExp()
-  WinActivate, ahk_id %PoEWindowHwnd%
-  SaveState()
+  ;   ; INIAtlas=%A_scriptdir%\maps\atlas.ini
+  ;   ; For key, value in Regions {
+  ;   ;   IniRead, numStones, %INIAtlas%, %CurrentAct%, %key%, 0
+  ;   ;   value.SocketedStones := numStones
+  ;   ; }
+  ;   ;SetMapGuide()
+  ;   ;SetMapNotes()
+  ;   If (zone_toggle = 1) {
+  ;     ;UpdateMapImages()
+  ;   }
+  ; }
+  ; SetExp()
+  ; WinActivate, ahk_id %PoEWindowHwnd%
+  ; SaveState()
 }
 
 zoneSelectUI() {
   global
+  Sleep 10000
   Gui, Controls:Submit, NoHide
   Sleep 100
   If (numPart != 3) {

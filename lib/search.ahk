@@ -44,14 +44,14 @@
   ;Whenever you enter a new level, the client.txt adds a line like
   ;'Generating level 1 area "G1_1" with seed 1066861483'
   ;Here we extract the monster level, area, and part if a line like that exists.
-  foundNewZoneLine := RegExMatch(newLogLines, "O)Generating level (.*) area (.*) with seed", newZoneLineOutput)
+  foundNewZoneLine := RegExMatch(newLogLines, "O)Generating level (.*) area ""(.*)"" with seed", newZoneLineOutput)
   if (foundNewZoneLine){
     newMonsterLevel := newZoneLineOutput[1] + 0 ;+0 forces int
     newAreaCode := newZoneLineOutput[2]
 
     ;Saves the new zone & monster level to current state, writes to ini, AND selects in the GUI
     ;TODO: this is probably way too much huh
-    GlobalState.GetZoneData().SaveZoneFromAreaCode(monsterLevel, areaCode)
+    GlobalState.GetZoneData().SaveZoneFromAreaCode(monsterLevel, newAreaCode)
   }
 
   ;TODO: What does this IF do? is it supposed to only update the monster level xp calc if the user has that window open?
