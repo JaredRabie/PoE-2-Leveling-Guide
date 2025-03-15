@@ -1,4 +1,4 @@
-﻿global overlayFolder := "Select A Build"
+﻿global overlayFolder := "0.1.0 Lightning Arrow Deadeye"
 global notesFolder := "Default"
 
 global points := 9
@@ -71,7 +71,7 @@ global active_toggle := 1
 global numPart := 1
 global CurrentPart = "Part 1"
 global CurrentAct = "Act 1"
-global CurrentZone = "1 G1_1 The Riverbank"
+global CurrentZone = "The Riverbank"
 global LastLogLines = "Generating level 1 area ""G1_1"""
 global CurrentLevel = "01"
 global CurrentGem = "02"
@@ -86,8 +86,9 @@ ifnotexist,%ININame%
 
 ;*** Load
 ;IniRead, OutputVar, Filename, Section, Key , Default
-
 IniRead, overlayFolder, %ININame%, Build, overlayFolder, %overlayFolder%
+GlobalState.SetOverlayFolder(overlayFolder)
+
 IniRead, notesFolder, %ININame%, Build, notesFolder, %notesFolder%
 
 IniRead, points, %ININame%, Size, points, %points%
@@ -167,11 +168,6 @@ IniRead, LastLogLines, %INIMeta%, State, LastLogLines, %LastLogLines%
 
 SaveState() {
 	global
-	IniWrite, %numPart%, %INIMeta%, State, numPart
-	IniWrite, %CurrentPart%, %INIMeta%, State, CurrentPart
-	IniWrite, %CurrentAct%, %INIMeta%, State, CurrentAct
-	IniWrite, %CurrentZone%, %INIMeta%, State, CurrentZone
-	IniWrite, %CurrentLevel%, %INIMeta%, State, CurrentLevel
 	IniWrite, %CurrentGem%, %INIMeta%, State, CurrentGem
 	IniWrite, %zone_toggle%, %INIMeta%, State, zone_toggle
 	IniWrite, %level_toggle%, %INIMeta%, State, level_toggle

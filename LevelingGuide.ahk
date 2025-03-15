@@ -1,51 +1,57 @@
 ﻿#SingleInstance, force
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
-SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+global ProjectRootDirectory := A_ScriptDir ;LevelingGuide.ahk should sit at the top of this project.
+SetWorkingDir ProjectRootDirectory ; Ensures a consistent starting directory.
 
-;region - Check AHK Version Compatibilty
-requiredVer := "1.1.30.03", unicodeOrAnsi := A_IsUnicode?"Unicode":"ANSI", 32or64bits := A_PtrSize=4?"32bits":"64bits"
-If (!A_IsUnicode) {
-	Run,% "https://www.autohotkey.com/"
-	MsgBox,4096+48,"PoE Leveling Guide - Wrong AutoHotKey Version"
-		, "/!\ PLEASE READ CAREFULLY /!\"
-		. "`n"
-		. "`n" "This application isn't compatible with ANSI versions of AutoHotKey."
-		. "`n" "You are using v" A_AhkVersion " " unicodeOrAnsi " " 32or64bits
-		. "`n" "Please download and install AutoHotKey Unicode 32/64"
-		. "`n"
-	ExitApp
-}
-If (A_AhkVersion < "1.1") ; Smaller than 1.1.00.00
-	|| (A_AhkVersion < "1.1.00.00")
-	|| (A_AhkVersion < requiredVer) { ; Smaller than required
-	Run,% "https://www.autohotkey.com/"
-	MsgBox,4096+48, "PoE Leveling Guide - AutoHotKey Version Too Low"
-		, "/!\ PLEASE READ CAREFULLY /!\"
-		. "`n"
-		. "`n" "This application requires AutoHotKey v" requiredVer " or higher."
-		. "`n" "You are using v" A_AhkVersion " " unicodeOrAnsi " " 32or64bits
-		. "`n" "AutoHotKey website has been opened, please update to the latest version."
-		. "`n"
-	ExitApp
-}
-If (A_AhkVersion >= "2.0")
-	|| (A_AhkVersion >= "2.0.00.00") { ; Higher or equal to 2.0.00.00
-	Run,% "https://www.autohotkey.com/"
-	MsgBox,4096+48, "PoE Leveling Guide - Wrong AutoHotKey Version"
-		, "/!\ PLEASE READ CAREFULLY /!\"
-		. "`n"
-		. "`n" "This application isn't compatible with AutoHotKey v2."
-		. "`n" "You are using v" A_AhkVersion " " unicodeOrAnsi " " 32or64bits
-		. "`n" "AutoHotKey v" requiredVer " or higher is required."
-		. "`n" "AutoHotKey website has been opened, please download the latest v1 version."
-		. "`n"
-	ExitApp
-}
-;endregion
+global client_txt_file := ""
+;Check version is compatible before we do anything else.
+CheckAHKVersionCompatibility()
 
+;Get some necessary functions.
 #Include, %A_ScriptDir%\lib\JSON.ahk
 #Include, %A_ScriptDir%\lib\Gdip.ahk
+
+;Read some global variables from ini.
+#Include, %A_ScriptDir%\lib\config.ahk
+#Include, %A_ScriptDir%\lib\settings.ahk
+#Include, %A_ScriptDir%\lib\sizing.ahk
+
+;These handle the UI basically - displaying and updating.
+#Include, %A_ScriptDir%\lib\draw.ahk
+#Include, %A_ScriptDir%\lib\set.ahk
+#Include, %A_ScriptDir%\lib\search.ahk
+
+;Includes the application loop that is run through continuously.
+#Include, %A_ScriptDir%\lib\class\ApplicationEngine.ahk
+
+;self explanatory :)
+#Include, %A_ScriptDir%\lib\hotkeys.ahk
+
+;Initialise Global State
+;constructor for this class includes all necessary initialisation, including
+; - reading ZoneReference.json to load GlobalState.ZoneData.ZoneReference and ini files
+;       for most recent part-act-zone combo.
+;TODO: Add gems to this object
+;TODO: Add global settings? at least feature flag/options, eg shouldUpdate or whatever
+;Candidates for global settings:
+; - shouldUpdate
+#Include, %A_ScriptDir%\lib\class\GlobalStateSingleton.ahk
+global GlobalState := new GlobalStateSingleton
+
+;Need to put this on GlobalState when I deal with gem setups.
+global gem_data := {}
+Try {
+	FileRead, JSONFile, %A_ScriptDir%\lib\gems.json
+	gem_data := JSON.Load(JSONFile)
+	If (not gem_data.Length()) {
+		MsgBox, 16, , Error reading gem Data! `n`nExiting script.
+		ExitApp
+	}
+} Catch e {
+	MsgBox, 16, , % e "`n`nNo Gem Data in \lib\gems.json"
+	ExitApp
+}
 
 ;Menu
 Menu, Tray, NoStandard
@@ -74,30 +80,94 @@ GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExi
 GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExilex64EGS.exe
 GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExile_x64Steam.exe
 
-;Read data.json - contains part, act, zone level, zone code, and zone name.
-global data := {}
-Try {
-	FileRead, JSONFile, %A_ScriptDir%\lib\data.json
-	data := JSON.Load(JSONFile)
-	If (not data.p1acts.Length()) {
-		MsgBox, 16, , Error reading zone data! `n`nExiting script.
+;Check for updates
+CheckForUpdates(skipUpdates)
+
+;Get gems ready - download if the images aren't there and user says yes
+LoadInGems()
+
+;Get the PoE2 Window Handle
+global PoEWindowHwnd := ""
+WinGet, PoEWindowHwnd, ID, ahk_group PoEWindowGrp
+
+;TODO: What does this do? Should this be a prop on GlobalState?
+global onStartup := 1
+
+DrawZone()
+DrawTree()
+DrawExp()
+
+SetGuide()
+SetNotes()
+SetGems()
+GlobalState.GetLevelTracker().UpdateExpTracker()
+
+HideAllWindows()
+ToggleLevelingGuide()
+
+;This is the engine that actually runs the app - ShowGuiTimer handles all of the minute-by-minute processing in
+;the application so we basically just run it over and over again.
+SetTimer, RunEngine, 200, -100 ;Run every 200ms, thread priority -100
+Return
+
+;This needs to be a label so we can use SetTimer, but to have it in ApplicationEngine.ahk it has to be a function
+;so that it doesn't run when we do the #Include. A label that calls the function is best solution I think
+RunEngine:
+	RunEngine()
+Return
+
+;========== Functions ==========
+
+CheckAHKVersionCompatibility() {
+	requiredVer := "1.1.30.03"
+	unicodeOrAnsi := A_IsUnicode?"Unicode":"ANSI"
+	32or64bits := A_PtrSize=4?"32bits":"64bits"
+	If (!A_IsUnicode) {
+		Run,% "https://www.autohotkey.com/"
+		MsgBox,4096+48,"PoE Leveling Guide - Wrong AutoHotKey Version"
+			, "/!\ PLEASE READ CAREFULLY /!\"
+			. "`n"
+			. "`n" "This application isn't compatible with ANSI versions of AutoHotKey."
+			. "`n" "You are using v" A_AhkVersion " " unicodeOrAnsi " " 32or64bits
+			. "`n" "Please download and install AutoHotKey Unicode 32/64"
+			. "`n"
 		ExitApp
 	}
-} Catch e {
-	MsgBox, 16, , % e "`n`nCould not read data file: Exiting script."
-	ExitApp
+	If (A_AhkVersion < "1.1") ; Smaller than 1.1.00.00
+		|| (A_AhkVersion < "1.1.00.00")
+		|| (A_AhkVersion < requiredVer) { ; Smaller than required
+		Run,% "https://www.autohotkey.com/"
+		MsgBox,4096+48, "PoE Leveling Guide - AutoHotKey Version Too Low"
+			, "/!\ PLEASE READ CAREFULLY /!\"
+			. "`n"
+			. "`n" "This application requires AutoHotKey v" requiredVer " or higher."
+			. "`n" "You are using v" A_AhkVersion " " unicodeOrAnsi " " 32or64bits
+			. "`n" "AutoHotKey website has been opened, please update to the latest version."
+			. "`n"
+		ExitApp
+	}
+	If (A_AhkVersion >= "2.0")
+		|| (A_AhkVersion >= "2.0.00.00") { ; Higher or equal to 2.0.00.00
+		Run,% "https://www.autohotkey.com/"
+		MsgBox,4096+48, "PoE Leveling Guide - Wrong AutoHotKey Version"
+			, "/!\ PLEASE READ CAREFULLY /!\"
+			. "`n"
+			. "`n" "This application isn't compatible with AutoHotKey v2."
+			. "`n" "You are using v" A_AhkVersion " " unicodeOrAnsi " " 32or64bits
+			. "`n" "AutoHotKey v" requiredVer " or higher is required."
+			. "`n" "AutoHotKey website has been opened, please download the latest v1 version."
+			. "`n"
+		ExitApp
+	}
 }
 
-;Many global vars are declared in these #Include statements.
-global monsterLevel := "0"
-#Include, %A_ScriptDir%\lib\config.ahk
-#Include, %A_ScriptDir%\lib\settings.ahk
-#Include, %A_ScriptDir%\lib\sizing.ahk
+CheckForUpdates(skipUpdates) {
+	;User opted out of updates.
+	If (skipUpdates = "True") {
+		Return
+	}
 
-monsterLevel := StrSplit(CurrentZone, " ")[1] ;AHK index starts at 1
-
-;Check for updates
-If (skipUpdates = "False") {
+	;Check version stored in this project matches github repo.
 	versionFile = %A_ScriptDir%\filelist.txt
 	If (!FileExist(versionFile)) {
 		updatePLG := "True"
@@ -116,405 +186,110 @@ If (skipUpdates = "False") {
 			updatePLG := "False"
 		}
 	}
-	If (updatePLG = "True") {
-		MsgBox, 3,, % "You are running version " oldVersion " of the PoE Leveling Guide,`nversion " newVersion " is available, would you like to download it?`n`nTHIS COULD TAKE A FEW MINUTES!"
-		IfMsgBox Yes
+
+	;No update available.
+	If (updatePLG = "False" || updatePLG = "") {
+		Return
+	}
+
+	;An update is available - prompt user to install. 4 => Yes/No options are given.
+	MsgBox, 4,, % "You are running version " oldVersion " of the PoE Leveling Guide,`nversion " newVersion " is available, would you like to download it?`n`nTHIS COULD TAKE A FEW MINUTES!"
+
+	;User declined to update. Do nothing.
+	IfMsgBox No
+		Return
+
+	IfMsgBox, Yes
+	{
+		progressWidth := 200
+		ignoreBuilds := "builds/"
+		ignoreSeeds := "Seed_"
+		Loop, read, %A_ScriptDir%\filelist.txt
 		{
-			progressWidth := 200
-			ignoreBuilds := "builds/"
-			ignoreSeeds := "Seed_"
-			Loop, read, %A_ScriptDir%\filelist.txt
-			{
-				If (A_Index = 1){
-					;Do nothing
-				} Else If (A_Index = 2){
-					progressWidth := A_LoopReadLine
-					If progressWidth is not integer
-						Break
-					Progress, b w200, Please don't stop the download until complete, Updating Script
-				} Else {
-					flippedSlashes := StrReplace(A_LoopReadLine, "/", "\")
-					updateFile = %A_ScriptDir%\%flippedSlashes%
-					lastSlashPos := InStr(updateFile,"\",0,0)
-					downloadDirName := SubStr(updateFile,1,lastSlashPos-1)
-					If ( InStr(A_LoopReadLine,ignoreBuilds) || InStr(A_LoopReadLine,ignoreSeeds) ){
-						If (!FileExist(updateFile)) { ; Only download builds and seed images if they don't already exist
-							FileCreateDir, %downloadDirName%
-							UrlDownloadToFile, https://raw.githubusercontent.com/JusKillmeQik/PoE-Leveling-Guide/main/%A_LoopReadLine%, %updateFile%
-						}
-					} Else {
-						If (!FileExist(updateFile)) { ; If the file doesn't exist make sure to create the directory
-							FileCreateDir, %downloadDirName%
-						}
+			If (A_Index = 1){
+				;Do nothing
+			} Else If (A_Index = 2){
+				progressWidth := A_LoopReadLine
+				If progressWidth is not integer
+					Break
+				Progress, b w200, Please don't stop the download until complete, Updating Script
+			} Else {
+				flippedSlashes := StrReplace(A_LoopReadLine, "/", "\")
+				updateFile = %A_ScriptDir%\%flippedSlashes%
+				lastSlashPos := InStr(updateFile,"\",0,0)
+				downloadDirName := SubStr(updateFile,1,lastSlashPos-1)
+				If ( InStr(A_LoopReadLine,ignoreBuilds) || InStr(A_LoopReadLine,ignoreSeeds) ){
+					If (!FileExist(updateFile)) { ; Only download builds and seed images if they don't already exist
+						FileCreateDir, %downloadDirName%
 						UrlDownloadToFile, https://raw.githubusercontent.com/JusKillmeQik/PoE-Leveling-Guide/main/%A_LoopReadLine%, %updateFile%
 					}
-					progressPercent := 100 * (A_Index/progressWidth)
-					Progress, %progressPercent%
+				} Else {
+					If (!FileExist(updateFile)) { ; If the file doesn't exist make sure to create the directory
+						FileCreateDir, %downloadDirName%
+					}
+					UrlDownloadToFile, https://raw.githubusercontent.com/JusKillmeQik/PoE-Leveling-Guide/main/%A_LoopReadLine%, %updateFile%
 				}
+				progressPercent := 100 * (A_Index/progressWidth)
+				Progress, %progressPercent%
 			}
-		} Else IfMsgBox No
-		{
-			;Do nothing
-		} Else {
-			ExitApp
 		}
+		Progress, Off
+		Return
 	}
-	Progress, Off
-}
 
-global gem_data := {}
-Try {
-	FileRead, JSONFile, %A_ScriptDir%\lib\gems.json
-	gem_data := JSON.Load(JSONFile)
-	If (not gem_data.Length()) {
-		MsgBox, 16, , Error reading gem data! `n`nExiting script.
-		ExitApp
-	}
-} Catch e {
-	MsgBox, 16, , % e "`n`nNo Gem data in \lib\gems.json"
+	;If we made it this far something went wrong - potentially a timeout?
+	MsgBox, 16, , Error checking for updates! `n`nExiting script.
 	ExitApp
 }
 
-global gemList := Object()
-global filterList := [" None"]
-If (skipGemImages = "False") {
-	downloadApproved := "None"
-} Else {
-	downloadApproved := "False"
-}
-progressWidth := gem_data.length()
-
-For key, someGem in gem_data {
-	gemList[gemList.length()+1] := Object()
-	gemList[gemList.length()].name := someGem.name
-	tempColor := someGem.color
-	gemList[gemList.length()].color := %tempColor%Color ;Use the settings color
-	gemList[gemList.length()].cost := someGem.cost
-	gemList[gemList.length()].vendor := someGem.vendor
-	gemList[gemList.length()].lvl := someGem.required_lvl
-	gemList[gemList.length()].url := "" "\images\gems\" someGem.name ".png"  ""
-
-	image_file := "" A_ScriptDir "\images\gems\" someGem.name ".png"  ""
-	icon_url := someGem.iconPath
-	If (!FileExist(image_file) and icon_url!="") {
-		If (downloadApproved = "True") {
-			UrlDownloadToFile, %icon_url%, %image_file%
-			progressPercent := 100 * (A_Index/progressWidth)
-			Progress, %progressPercent%
-		} Else If (downloadApproved = "False") {
-			;do nothing
-		} ;Else { ;commenting this for now because no I do not want to download POE1 gems in my POE2 overlay
-		;MsgBox, 3,, You are missing some gem image files,`nwould you like to download them?`n`nTHIS COULD TAKE A FEW MINUTES!
-		;IfMsgBox Yes
-		;{
-		;  downloadApproved := "True"
-		;  UrlDownloadToFile, %icon_url%, %image_file%
-		;  Progress, b w%progressWidth%, Please don't stop the download until complete, Downloading Gem Images
-		;  progressPercent := 100 * (A_Index/progressWidth)
-		;  Progress, %progressPercent%
-		;} Else IfMsgBox No
-		;{
-		;  downloadApproved := "False"
-		;} Else {
-		;  ExitApp
-		;}
-		;}
-	}
-}
-Progress, Off
-
-global PoEWindowHwnd := ""
-WinGet, PoEWindowHwnd, ID, ahk_group PoEWindowGrp
-
-global onStartup := 1
-
-#Include, %A_ScriptDir%\lib\draw.ahk
-DrawZone()
-DrawTree()
-DrawExp()
-
-#Include, %A_ScriptDir%\lib\set.ahk
-If (numPart != 3) {
-	SetGuide()
-	SetNotes()
-} Else {
-	;SetMapGuide()
-	;SetMapNotes()
-}
-SetGems()
-
-SetExp()
-
-#Include, %A_ScriptDir%\lib\hotkeys.ahk
-
-Gosub, HideAllWindows
-ToggleLevelingGuide()
-
-global conqFound := 0
-#Include, %A_ScriptDir%\lib\search.ahk
-
-SetTimer, ShowGuiTimer, 200, -100
-Return
-
-;========== Subs and Functions =======
-
-InitLogFile(filepath){
-	global client_txt_file := FileOpen(filepath,"r")
-	client_txt_file.Seek(0,2) ;skip file pointer to end (Origin = 2 -> end of file, distance 0 => end)
-	global log := client_txt_file.Read() ; should be empty now and redundant
-}
-
-ShowGuiTimer:
-	poe_active := WinActive("ahk_id" PoEWindowHwnd)
-	controls_active := WinActive("ahk_id" . Controls) ; Wow that dot is important!
-	level_active := WinActive("ahk_id" . Level)
-	gems_active := WinActive("ahk_id" . Gems)
-
-	If (activeCount <= displayTimeout) {
-		If (activeCount = 0) {
-			activeTime := A_Now
-		}
-		active_toggle := 1
-		If (!controls_active) {
-			activeCount := A_Now - activeTime
-			If (activeCount = 0) {
-				activeCount := 1
-			}
-		}
-	} Else if (activeCount > displayTimeout and active_toggle) {
-		GoSub, HideAllWindows
-		active_toggle := 0
-	}
-
-	If (controls_active or displayTimeout=0) {
-		activeCount := 0
-		active_toggle := 1
-	}
-
-	If (poe_active or controls_active or level_active or gems_active) {
-		; show all gui windows
-		GoSub, ShowAllWindows
-		Sleep 500
+LoadInGems() {
+	global gemList := Object()
+	global filterList := [" None"]
+	If (skipGemImages = "False") {
+		downloadApproved := "None"
 	} Else {
-		GoSub, HideAllWindows
-		;Reset activity upon return
-		activeCount := 0
-		active_toggle := 1
+		downloadApproved := "False"
 	}
+	progressWidth := gem_data.length()
 
-	While true
-	{
-		;The PoEWindow doesn't stay active through a restart, so must wait for it to be open
-		closed := 0
+	For key, someGem in gem_data {
+		gemList[gemList.length()+1] := Object()
+		gemList[gemList.length()].name := someGem.name
+		tempColor := someGem.color
+		gemList[gemList.length()].color := %tempColor%Color ;Use the settings color
+		gemList[gemList.length()].cost := someGem.cost
+		gemList[gemList.length()].vendor := someGem.vendor
+		gemList[gemList.length()].lvl := someGem.required_lvl
+		gemList[gemList.length()].url := "" "\images\gems\" someGem.name ".png"  ""
 
-		;region - Look for a running Path Of Exile window
-		Process, Exist, PathOfExile.exe
-		If(!errorlevel) {
-			closed++
-		} Else {
-			client := GetProcessPath( "PathOfExile.exe" )
-			StringTrimRight, client, client, 15
-			client .= "logs\Client.txt"
-		}
-
-		Process, Exist, PathOfExileSteam.exe
-		If(!errorlevel) {
-			closed++
-		} Else {
-			client := GetProcessPath( "PathOfExileSteam.exe" )
-			StringTrimRight, client, client, 20
-			client .= "logs\Client.txt"
-		}
-
-		Process, Exist, PathOfExile_KG.exe
-		If(!errorlevel) {
-			closed++
-		} Else {
-			client := GetProcessPath( "PathOfExile_KG.exe" )
-			StringTrimRight, client, client, 18
-			client .= "logs\KakaoClient.txt"
-		}
-
-		Process, Exist, PathOfExile_EGS.exe
-		If(!errorlevel) {
-			closed++
-		} Else {
-			client := GetProcessPath( "PathOfExile_EGS.exe" )
-			StringTrimRight, client, client, 19
-			client .= "logs\Client.txt"
-		}
-
-		Process, Exist, PathOfExileEGS.exe
-		If(!errorlevel) {
-			closed++
-		} Else {
-			client := GetProcessPath( "PathOfExileEGS.exe" )
-			StringTrimRight, client, client, 18
-			client .= "logs\Client.txt"
-		}
-
-		Process, Exist, PathOfExile_x64.exe
-		If(!errorlevel) {
-			closed++
-		} Else {
-			client := GetProcessPath( "PathOfExile_x64.exe" )
-			StringTrimRight, client, client, 19
-			client .= "logs\Client.txt"
-		}
-
-		Process, Exist, PathOfExile_x64Steam.exe
-		If(!errorlevel) {
-			closed++
-		} Else {
-			client := GetProcessPath( "PathOfExile_x64Steam.exe" )
-			StringTrimRight, client, client, 24
-			client .= "logs\Client.txt"
-		}
-
-		Process, Exist, PathOfExile_x64_KG.exe
-		If(!errorlevel) {
-			closed++
-		} Else {
-			client := GetProcessPath( "PathOfExile_x64_KG.exe" )
-			StringTrimRight, client, client, 22
-			client .= "logs\KakaoClient.txt"
-		}
-
-		Process, Exist, PathOfExile_x64EGS.exe
-		If(!errorlevel) {
-			closed++
-		} Else {
-			client := GetProcessPath( "PathOfExile_x64EGS.exe" )
-			StringTrimRight, client, client, 22
-			client .= "logs\Client.txt"
-		}
-
-		Process, Exist, PathOfExilex64EGS.exe
-		If(!errorlevel) {
-			closed++
-		} Else {
-			client := GetProcessPath( "PathOfExilex64EGS.exe" )
-			StringTrimRight, client, client, 21
-			client .= "logs\Client.txt"
-		}
-		;endregion
-
-		If (closed = 10){
-			GoSub, HideAllWindows
-			;Sleep 10 seconds, no need to keep checking this
-			Sleep 10000
-			;Reset activity upon return
-			activeCount := 0
-			active_toggle := 1
-		} Else {
-			If (onStartup) {
-				;save client variable to compare in the future if the client.exe changed and thus the client.txt needs to be reread
-				old_client_txt_path := client
-				InitLogFile(client)
-				;Delete Client.txt on startup so we don't have to read a HUGE file!
-				FileGetSize, clientSize, %client%, K  ; Retrieve the size in Kbytes.
-				If(clientSize > 100000){
-					MsgBox, 1,, Your %client% is over 100Mb and will be deleted to speed up this script. Feel free to Cancel and rename the file if you want to keep it, but deletion will not affect the game at all.
-					IfMsgBox Ok
-					{
-						file := FileOpen(client, "w")
-						If IsObject(file) {
-							file.Close()
-						}
-					}
-				}
-				onStartup := 0
-			}
-			;after startup check if new client_txt_path is different from old_client_txt_path (changed launcher)
-			if ((old_client_txt_path != client) and (closed != 8)){
-				old_client_txt_path := client
-				InitLogFile(client)
-			}
-			WinGet, PoEWindowHwnd, ID, ahk_group PoEWindowGrp
-			break
-		}
-	} ;End While
-
-	;Magic
-	SearchLog()
-
-return
-
-ShowAllWindows:
-	If (LG_toggle and active_toggle) {
-		Gui, Controls:Show, NoActivate
-	}
-	controls_active := WinActive("ahk_id" Controls)
-	If (LG_toggle and !controls_active and (active_toggle or persistText = "True")) {
-		Gui, Guide:Show, NoActivate
-		If (numPart = 3) {
-			Gui, Atlas:Show, NoActivate
-		} Else {
-			Gui, Atlas:Cancel
-		}
-		Gui, Notes:Show, NoActivate
-	} Else If (!controls_active) {
-		Gui, Notes:Cancel
-		Gui, Atlas:Cancel
-		Gui, Guide:Cancel
-	}
-
-	If (zone_toggle) {
-		;UpdateImages()
-		Loop, % maxImages {
-			Gui, Image%A_Index%:Show, NoActivate
-		}
-	} else {
-		Loop, % maxImages {
-			Gui, Image%A_Index%:Cancel
+		image_file := "" A_ScriptDir "\images\gems\" someGem.name ".png"  ""
+		icon_url := someGem.iconPath
+		If (!FileExist(image_file) and icon_url!="") {
+			If (downloadApproved = "True") {
+				UrlDownloadToFile, %icon_url%, %image_file%
+				progressPercent := 100 * (A_Index/progressWidth)
+				Progress, %progressPercent%
+			} Else If (downloadApproved = "False") {
+				;do nothing
+			} ;Else { ;commenting this for now because no I do not want to download POE1 gems in my POE2 overlay
+			;MsgBox, 3,, You are missing some gem image files,`nwould you like to download them?`n`nTHIS COULD TAKE A FEW MINUTES!
+			;IfMsgBox Yes
+			;{
+			;  downloadApproved := "True"
+			;  UrlDownloadToFile, %icon_url%, %image_file%
+			;  Progress, b w%progressWidth%, Please don't stop the download until complete, Downloading Gem Images
+			;  progressPercent := 100 * (A_Index/progressWidth)
+			;  Progress, %progressPercent%
+			;} Else IfMsgBox No
+			;{
+			;  downloadApproved := "False"
+			;} Else {
+			;  ExitApp
+			;}
+			;}
 		}
 	}
-
-	If (tree_toggle or atlas_toggle) {
-		Gui, Tree:Show, NoActivate
-	} Else If (level_toggle) {
-		Gui, Level:Show, NoActivate
-		Gui, Exp:Show, NoActivate
-		;SetExp()
-	}
-
-	If (gems_toggle) {
-		Gui, Gems:Show, NoActivate
-		Gui, Links:Show, NoActivate
-
-		For k, someControl in controlList {
-			If (%someControl%image){
-				Gui, Image%someControl%:Show, NoActivate
-			}
-		}
-	}
-return
-
-HideAllWindows:
-	Gui, Controls:Cancel
-	Gui, Level:Cancel
-	Gui, Exp:Cancel
-
-	Loop, % maxImages {
-		Gui, Image%A_Index%:Cancel
-	}
-
-	For k, someControl in controlList {
-		Gui, Image%someControl%:Cancel
-	}
-
-	Gui, Notes:Cancel
-	Gui, Atlas:Cancel
-	Gui, Guide:Cancel
-
-	Gui, Tree:Cancel
-	Gui, Gems:Cancel
-	Gui, Links:Cancel
-return
-
-GetProcessPath(exe) {
-	for process in ComObjGet("winmgmts:").ExecQuery("Select * from Win32_Process where name ='" exe "'")
-		return process.ExecutablePath
+	Progress, Off
 }
 
 PLGReload:

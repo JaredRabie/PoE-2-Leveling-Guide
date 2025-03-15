@@ -1,11 +1,14 @@
 {
+	"parts": ["Part 1", "Part 2"],
+	"p1acts": ["Act 1", "Act 2", "Act 3"],
+	"p2acts": ["Act 1 Cruel", "Act 2 Cruel", "Act 3 Cruel"],
 	"zones": [
 		{
 			"default": "G1_1 The Riverbank",
-			"act": "Act 1",
 			"part": "Part 1",
+			"act": "Act 1",
 			"list": [
-				"1 G1_1 The Riverbank",
+				"G1_1 The Riverbank",
 				"G1_2 Clearfell",
 				"G1_3 Mud Burrow",
 				"G1_4 The Grelwood",
@@ -24,8 +27,8 @@
 		},
 		{
 			"default": "G2_1 Vastiri Outskirts",
-			"act": "Act 2",
 			"part": "Part 1",
+			"act": "Act 2",
 			"list": [
 				"G2_1 Vastiri Outskirts",
 				"G2_2 Traitor's Passage",
@@ -48,8 +51,8 @@
 		},
 		{
 			"default": "G3_1 Sandswept Marsh",
-			"act": "Act 3",
 			"part": "Part 1",
+			"act": "Act 3",
 			"list": [
 				"G3_1 Sandswept Marsh",
 				"G3_2_1 Infested Barrens",
@@ -71,8 +74,8 @@
 		},
 		{
 			"default": "C_G1_1 The Riverbank",
-			"act": "Act 1 Cruel",
 			"part": "Part 2",
+			"act": "Act 1 Cruel",
 			"list": [
 				"C_G1_1 The Riverbank",
 				"C_G1_2 Clearfell",
@@ -93,8 +96,8 @@
 		},
 		{
 			"default": "C_G2_1 Vastiri Outskirts",
-			"act": "Act 2 Cruel",
 			"part": "Part 2",
+			"act": "Act 2 Cruel",
 			"list": [
 				"C_G2_1 Vastiri Outskirts",
 				"C_G2_2 Traitor's Passage",
@@ -117,8 +120,8 @@
 		},
 		{
 			"default": "C_G3_1 Sandswept Marsh",
-			"act": "Act 3 Cruel",
 			"part": "Part 2",
+			"act": "Act 3 Cruel",
 			"list": [
 				"C_G3_1 Sandswept Marsh",
 				"C_G3_2_1 Infested Barrens",
@@ -138,8 +141,5 @@
 				"C_G3_17 The Black Chambers"
 			]
 		}
-	],
-	"p1acts": ["Act 1", "Act 2", "Act 3"],
-	"p2acts": ["Act 1 Cruel", "Act 2 Cruel", "Act 3 Cruel"],
-	"parts": ["Part 1", "Part 2"]
+	]
 }

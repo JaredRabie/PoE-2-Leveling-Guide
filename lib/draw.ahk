@@ -17,16 +17,14 @@
   gems_width := gems_width + 10
   ;If (gemFiles.length() = 0){ ;If the file didnt exist it just got created, probably empty
   ;  gemFiles := ["02"]
-  ;}
-
-  test := % GetDelimitedZoneListString(data.zones, CurrentAct)
+  ;} 
 
   Gui, Controls:+E0x20 +E0x80 -DPIScale -Caption +LastFound +ToolWindow +AlwaysOnTop +hwndControls
   Gui, Controls:Color, %backgroundColor%
   Gui, Controls:Font, s%points%, %font%
-  Gui, Controls:Add, DropDownList, VCurrentZone GzoneSelectUI x0 y0 w%act_width% h300 , % GetDelimitedZoneListString(data.zones, CurrentAct)
-  Gui, Controls:Add, DropDownList, VCurrentAct GactSelectUI x+%controlSpace% y0 w%nav_width% h200 , % GetDelimitedActListString(data.zones, CurrentAct, CurrentPart)
-  Gui, Controls:Add, DropDownList, VCurrentPart GpartSelectUI x+%controlSpace% y0 w%part_width% h200 , % GetDelimitedPartListString(data.parts, CurrentPart)
+  Gui, Controls:Add, DropDownList, VCurrentZone GzoneSelectUI x0 y0 w%act_width% h300 , % GlobalState.ZoneData.GetZonesInCurrentAct()
+  Gui, Controls:Add, DropDownList, VCurrentAct GactSelectUI x+%controlSpace% y0 w%nav_width% h200 , % GlobalState.ZoneData.GetActsInCurrentPart()
+  Gui, Controls:Add, DropDownList, VCurrentPart GpartSelectUI x+%controlSpace% y0 w%part_width% h200 , % GlobalState.ZoneData.GetParts()
   ;xPos := xPosLayoutParent + (maxImages * (images_width+controlSpace))
   control_width := nav_width + part_width + act_width + (controlSpace*2)
   xPos := Round( (A_ScreenWidth * guideXoffset) - control_width )
@@ -36,7 +34,7 @@
   Gui, Gems:+E0x20 +E0x80 -DPIScale -Caption +LastFound +ToolWindow +AlwaysOnTop +hwndGems
   Gui, Gems:Color, %backgroundColor%
   Gui, Gems:Font, s%points%, %font%
-  Gui, Gems:Add, DropDownList, Sort VCurrentGem GgemSelectUI x0 y0 w%gems_width% h300 , % GetDelimitedPartListString(gemFiles, CurrentGem)
+  Gui, Gems:Add, DropDownList, Sort VCurrentGem GgemSelectUI x0 y0 w%gems_width% h300 , % GlobalState.ZoneData.GetParts()
   Gui, Gems:Show, h%control_height% w%gems_width% x%xPosGems% y%yPosGems% NA, Gems
 
   Gui, Level:+E0x20 +E0x80 -DPIScale -Caption +LastFound +ToolWindow +AlwaysOnTop +hwndLevel
@@ -172,9 +170,9 @@ DrawExp(){
   Gui, Exp:Show, x%xPosExp% y%yPosExp% w%exp_width% h%control_height% NA, Gui Exp
 }
 
-GetDelimitedPartListString(data, part) {
+GetDelimitedPartListString(zoneReference, part) {
   dList := ""
-  For key, partItem in data {
+  For key, partItem in zoneReference {
     dList .= partItem . "|"
     If ( InStr(partItem,part) ) {
       ;If (partItem = part) {
@@ -184,10 +182,10 @@ GetDelimitedPartListString(data, part) {
   Return dList
 }
 
-GetDelimitedActListString(data, act, part) {
+GetDelimitedActListString(zoneReference, act, part) {
   dList := ""
   If (numPart != 3) {
-    For key, zoneGroup in data {
+    For key, zoneGroup in zoneReference {
       If (zoneGroup.part = part) {
         dList .= zoneGroup.act . "|"
       }
@@ -212,10 +210,10 @@ GetDelimitedActListString(data, act, part) {
   Return dList
 }
 
-GetDelimitedZoneListString(data, act) {
+GetDelimitedZoneListString(zoneReference, act) {
   dList := ""
   If (numPart != 3) {
-    For key, zoneGroup in data {
+    For key, zoneGroup in zoneReference {
       If (zoneGroup.act = act) {
         For k, zone in zoneGroup.list {
           ;zone looks like "C_G2_5_1 Mastodon Badlands", turn it into "Mastodon Badlands".
@@ -258,13 +256,13 @@ partSelectUI() {
     ; Gui, Guide:Cancel
   }
 
-  GuiControl,,CurrentAct, % "|" test := GetDelimitedActListString(data.zones, CurrentAct, CurrentPart)
+  GuiControl,,CurrentAct, % "|" test := GetDelimitedActListString(GlobalState.ZoneData.ZoneReference.ZoneReference.zones, CurrentAct, CurrentPart)
   Sleep 100
 
   If (numPart != 3) {
-    CurrentZone := GetDefaultZone(data.zones, CurrentAct)
+    CurrentZone := GetDefaultZone(GlobalState.ZoneData.ZoneReference.ZoneReference.zones, CurrentAct)
   }
-  GuiControl,,CurrentZone, % "|" test := GetDelimitedZoneListString(data.zones, CurrentAct)
+  GuiControl,,CurrentZone, % "|" test := GetDelimitedZoneListString(GlobalState.ZoneData.ZoneReference.ZoneReference.zones, CurrentAct)
   Sleep 100
   If (numPart != 3) {
     SetGuide()
@@ -292,8 +290,8 @@ actSelectUI() {
   Gui, Controls:Submit, NoHide
 
   If (numPart != 3){
-    CurrentZone := GetDefaultZone(data.zones, CurrentAct)
-    GuiControl,,CurrentZone, % "|" test := GetDelimitedZoneListString(data.zones, CurrentAct)
+    CurrentZone := GetDefaultZone(GlobalState.ZoneData.ZoneReference.ZoneReference.zones, CurrentAct)
+    GuiControl,,CurrentZone, % "|" test := GetDelimitedZoneListString(GlobalState.ZoneData.ZoneReference.ZoneReference.zones, CurrentAct)
     Sleep 100
     SetGuide()
     SetNotes()

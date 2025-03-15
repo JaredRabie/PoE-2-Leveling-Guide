@@ -23,7 +23,7 @@ ToggleLevelingGuide()
       Gui, Atlas:Cancel
     }
     Gui, Notes:Show, NA
-    GoSub, ShowAllWindows
+    ShowAllWindows()
   } else {
     Gui, Controls:Cancel
     Gui, Notes:Cancel
@@ -62,7 +62,7 @@ If (KeyCycleZones != "") {
 CycleZones() {
   global
   Gui, Controls:Submit, NoHide
-  newZone := RotateZone("next", data.zones, CurrentAct, CurrentZone)
+  newZone := RotateZone("next", GlobalState.ZoneData.ZoneReference.ZoneReference.zones, CurrentAct, CurrentZone)
   GuiControl, Controls:Choose, CurrentZone, % "|" newZone
 
   UpdateImages()

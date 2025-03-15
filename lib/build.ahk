@@ -389,7 +389,7 @@ ReadGemFile(fileLevel) {
     If (%someControl%url = "ERROR") {
       %someControl%url := ""
     }
-    If (groupName = "Inventory" and originalGroupName != "Inventory") { ;clear meta data for gems moved to inventory
+    If (groupName = "Inventory" and originalGroupName != "Inventory") { ;clear meta Data for gems moved to inventory
       %someControl%npc := ""
       %someControl%note := ""
       %someControl%image := 0
